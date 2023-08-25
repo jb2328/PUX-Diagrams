@@ -185,9 +185,11 @@ svg.append("g")
     const midX = (d.source + d.target) / 2;
     const path = d3.path();
     path.moveTo(d.source, y);
-    path.quadraticCurveTo(midX, y - 300, d.target, y); // 100 controls the curvature
+    path.quadraticCurveTo(midX, y - 300+Math.ceil(Math.random()*100), d.target, y); // 100 controls the curvature
     return path.toString();
   })
   .attr("fill", "none")
-  .attr("stroke", d => d.stroke) // Use 'stroke' attribute from the data
+  .attr("stroke", d => d.color) // Use 'stroke' attribute from the data
+  .attr("stroke-width", d => 1) // Use 'stroke' attribute from the data
+  .attr("color", d => d.color) // Use 'stroke' attribute from the data
   .attr("stroke-opacity", 0.4);
