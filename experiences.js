@@ -218,3 +218,88 @@ const newData=[
 }
 
 ]
+
+// Your data
+const inputData = 
+  // ... (your data here)
+  [
+  {
+    "id": "Search",
+    "name": "IA1",
+    "size": 1,
+    "imports": ["VE1", "VE4", "SE3", "TE4"]
+  },
+  {
+    "id": "Comparison",
+    "name": "IA2",
+    "size": 1,
+    "imports": ["VE5", "SE4", "ME4", "TE2"]
+  },
+  {
+    "id": "Sense-making",
+    "name": "IA3",
+    "size": 1,
+    "imports": ["VE2", "VE3", "SE1", "ME1", "ME3", "TE3", "TE5"]
+  },
+  {
+    "id": "Incrementation",
+    "name": "CA1",
+    "size": 1,
+    "imports": ["IE1", "PE6"]
+  },
+  {
+    "id": "Transcription",
+    "name": "CA2",
+    "size": 1,
+    "imports": ["ME2", "IE2", "IE3", "IE5", "PE2", "PE5"]
+  },
+  {
+    "id": "Modification",
+    "name": "CA3",
+    "size": 1,
+    "imports": ["SE2", "ME5", "IE4", "TE1", "PE1", "CE1"]
+  },
+  {
+    "id": "Exploratory design",
+    "name": "CA4",
+    "size": 1,
+    "imports": ["TE5", "PE3", "PE4", "CE2", "CE3", "CE4"]
+  },
+  {
+    "id": "Illustrate a story",
+    "name": "SA1",
+    "size": 1,
+    "imports": ["VE2", "VE4", "IE6", "TE1", "CE3"]
+  },
+  {
+    "id": "Organise a discussion",
+    "name": "SA2",
+    "size": 1,
+    "imports": ["ME5", "IE2", "TE2", "PE3", "PE4", "CE4"]
+  },
+  {
+    "id": "Persuade an audience",
+    "name": "SA3",
+    "size": 1,
+    "imports": ["VE3", "SE4", "ME2", "ME6", "IE5", "TE3", "TE5"]
+  }
+
+];
+
+const secondaryData=[
+    {'name': 'VE2','in': ['IE5', 'CE3'],'out': ['IE2', 'VE5', 'TE4', 'ME6', 'SE1']},
+    {'name': 'IE2', 'in': ['ME2', 'PE6'], 'out': ['PE2', 'SE2']},
+    {'name': 'ME4', 'in': ['ME6', 'PE2', 'TE5', 'ME1', 'TE2'], 'out': ['SE4']},
+    {'name': 'IE3','in': ['PE5', 'VE5', 'SE1', 'ME2', 'ME6'], 'out': ['CE4', 'CE3']},
+    {'name': 'VE5', 'in': ['SE3', 'SE2', 'ME4'], 'out': ['ME3', 'IE2', 'CE4']},
+    {'name': 'PE6','in': ['ME3', 'PE5'],'out': ['CE1', 'SE2', 'PE1', 'ME5', 'IE6', 'IE1']},
+    {'name': 'PE3','in': ['CE3', 'VE2', 'PE2', 'ME5', 'TE1'], 'out': ['TE5', 'PE4']},
+    {'name': 'SE3','in': ['ME4', 'PE1', 'ME6'],'out': ['IE5', 'PE6', 'CE2', 'IE2', 'SE1', 'VE3']},
+    {'name': 'ME2','in': ['IE5', 'IE4', 'IE3', 'SE1', 'VE2'],'out': ['TE4', 'IE6']},
+    {'name': 'IE1','in': ['PE1', 'IE2', 'PE3', 'IE3'],'out': ['CE4', 'ME1']},
+    {'name': 'CE1','in': ['PE3', 'TE3', 'VE3', 'VE1', 'IE2', 'TE4'],'out': ['ME3']},
+    {'name': 'VE4', 'in': ['IE6'], 'out': ['SE1']},
+    {'name': 'SE1', 'in': ['TE2'], 'out': ['ME2']},
+    {'name': 'TE2', 'in': ['ME4'], 'out': ['ME6', 'CE4']},
+
+];
