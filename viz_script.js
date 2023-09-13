@@ -44,6 +44,7 @@
     // .attr("stroke", "black")  // Outline color
     // .attr("opacity", 0.3)  // Outline color
     // .attr("stroke-width", STROKE_WIDTH_OFF);  // Outline width
+    
 
 let experiences="";
 let experiences_html="";
@@ -51,6 +52,10 @@ let experiences_html="";
 // Your list of elements
 let list = ["IA", "SA", "CA", "VE", "SE", "ME", "TE", "IE", "PE", "CE"];
 
+// Function to interpolate between two numbers
+function interpolate(a, b, t) {
+  return a + (b - a) * t;
+}
 // Get the colors from d3.schemeTableau10
 let colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 
@@ -67,16 +72,18 @@ list.forEach(function (element, index) {
   // Line generator for curvy lines
   const line = d3.line().curve(d3.curveBasis);
   
+
+  const controlPointFactor = 0.9; // Adjust this factor to control the sharpness
+
   // Draw lines connecting parents and children
   inputData.forEach(activity => {
     activity.imports.forEach(child => {
       const points = [
         [yScale(activity.name), 400],
-        [(xScale(child) + yScale(activity.name)) / 2, (400 + 250) / 2],
+        [interpolate(yScale(activity.name), xScale(child), controlPointFactor), (400 + 250) / 2],
         [xScale(child), 250]
       ];
 
-      
       console.log("PRINTING",activity.name, child)
       svg.append("path")
         .attr("d", line(points))
@@ -112,10 +119,14 @@ svg.append("g")
   .attr("id", d=>d.source_id+"-"+d.target_id)
   .attr("d", d => {
     const y = 241; // Y-coordinate of the children
-    const midX = (d.source + d.target) / 2;
+    // const midX = (d.source + d.target) / 2;
+    const midX = d.source;
+
     const path = d3.path();
     path.moveTo(d.source, y);
-    path.quadraticCurveTo(midX, y - (1000 * Math.pow(Math.abs(d.strength) - 0.45, 1)), d.target, y);
+    const curve_height=y - (1000 * Math.pow(Math.abs(d.strength) - 0.45, 1));
+    const curve_offset=Math.random()*25;
+    path.quadraticCurveTo(midX, curve_height+curve_offset, d.target, y);
 
     return path.toString();
   })
@@ -410,12 +421,9 @@ d3.select("#activity_txt")
 
     // Loop through and target elements with specificString in the first half
     firstHalfIDs.forEach(function(id) {
-
+      
+      target_circle="";
       target_circle= id.split("-")[1];
-      // console.log(id, target_circle);
-
-      const foundObject = newData.find(item => item.name === target_circle)
-      positive_experience+=(foundObject.id+" ("+target_circle+")"+", \n")
 
       d3.select("#experiences_circle-"+target_circle).style("opacity", OPACITY_ON)
 
@@ -436,13 +444,34 @@ d3.select("#activity_txt")
             d3.select("#" + id)
           });
         // Adjust stroke properties as needed
+
+
+        // console.log(id, target_circle);
+        // TODO: SE1 breaks and a lot of things break wtf
+        let foundObject = newData.find(item => item.name === target_circle)
+        if(foundObject==undefined){
+          console.log("id", id,"ERROR?",foundObject, "target",target_circle)
+
+          foundObject = inputData.find(item => item.name === target_circle)
+          console.log("id", id,"ERROR?",foundObject, "target",target_circle)
+
+        }
+        positive_experience+=(foundObject.id+" ("+target_circle+")"+", \n")
+  
+  
     });
     
     // Loop through and target elements with specificString in the second half
     secondHalfIDs.forEach(function(id) {
       target_circle= id.split("-")[0];
 
-      const foundObject = newData.find(item => item.name === target_circle)
+      let foundObject = newData.find(item => item.name === target_circle)
+        if(foundObject==undefined){
+          console.log("id", id,"ERROR?",foundObject, "target",target_circle)
+          foundObject = inputData.find(item => item.name === target_circle)
+          console.log("id", id,"ERROR?",foundObject, "target",target_circle)
+        }
+        
       negative_experience+=(foundObject.id+" ("+target_circle+")"+", \n")
 
       // console.log(id, target_circle);
