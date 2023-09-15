@@ -188,7 +188,7 @@ svg.append("g")
            .data(split_text) // Split the text into an array based on line breaks
            .enter()
            .append("tspan")
-           .attr("x", 150) // Adjust the x-coordinate as needed
+           .attr("x", 125) // Adjust the x-coordinate as needed
            .attr("dy", (d, i) => i==0?0:15) // Adjust the line height as needed
            .text(d => d);
 
@@ -219,6 +219,7 @@ svg.append("g")
     .data(activitiesWithChildren)
     .enter().append("text")
     .attr("class", "activities_txt")
+    .style("pointer-events", "none")
     .attr("x", d => yScale(d.name))
     .attr("y", 410)
     .attr("text-anchor", "middle")
@@ -246,6 +247,7 @@ svg.append("g")
     .data(uniqueChildren)
     .enter().append("text")
     .attr("class", "experiences_txt")
+    .style("pointer-events", "none")
     .attr("x", d => xScale(d))
     .attr("y", 250)
     .attr("text-anchor", "middle")
@@ -272,7 +274,7 @@ svg.append("g")
 
         d3.select("#"+source_id+"-"+target_id)
           .style("stroke", d.color)
-          .style("stroke-width", STROKE_WIDTH_ON)
+          // .style("stroke-width", STROKE_WIDTH_ON)
           .style("fill", "none")
           .style("stroke-opacity", OPACITY_ON);
       
@@ -312,7 +314,7 @@ svg.append("g")
 
         d3.select("#"+source_id+"-"+target_id)
         .style("stroke", d.color)
-        .style("stroke-width", STROKE_WIDTH_ON)
+        // .style("stroke-width", STROKE_WIDTH_ON)
         .style("fill", "none")
         .style("stroke-opacity", OPACITY_ON);
       
@@ -348,7 +350,7 @@ svg.append("g")
 
       const found_parent = inputData.find(item => item.name === entry);
 
-      parent_text+=found_parent.id+" ("+entry+'), \n';
+      parent_text+="("+entry+")  "+found_parent.id+", \n";
 
       // console.log("entry", entry,colorMap[entry.slice(0, 2)])
       d3.select("#"+entry+"-"+d)
@@ -373,18 +375,22 @@ d3.select("#activity_txt")
      .data(split_text) // Split the text into an array based on line breaks
      .enter()
      .append("tspan")
-     .attr("x", 150) // Adjust the x-coordinate as needed
+     .attr("x", 125) // Adjust the x-coordinate as needed
      .attr("dy", (d, i) => i==0?0:15) // Adjust the line height as needed
      .text(d => d);
 
 
      //-------------- duplicated code
      const foundObject = newData.find(item => item.name === d);
-     experiences+=(foundObject.id+" ("+d+")"+", \n");
+     experiences+=(" ("+d+")  "+foundObject.id+", \n");
     split_text=experiences.split("\n")
 
+    // d3.select("#experience_txt")
+    //   .text("");
+
  d3.select("#experience_txt")
-      .text(foundObject.id+" ("+d+")"+", \n");
+    .text("")
+      .text(" ("+d+")  "+foundObject.id+", \n");
 //------------
 
     d3.selectAll(".experience_circle")
@@ -456,7 +462,7 @@ d3.select("#activity_txt")
           console.log("id", id,"ERROR?",foundObject, "target",target_circle)
 
         }
-        positive_experience+=(foundObject.id+" ("+target_circle+")"+", \n")
+        positive_experience+=(" ("+target_circle+")   "+foundObject.id+", \n");
   
   
     });
@@ -471,8 +477,8 @@ d3.select("#activity_txt")
           foundObject = inputData.find(item => item.name === target_circle)
           console.log("id", id,"ERROR?",foundObject, "target",target_circle)
         }
-        
-      negative_experience+=(foundObject.id+" ("+target_circle+")"+", \n")
+
+      negative_experience+=(" ("+target_circle+")   \t"+foundObject.id+", \n");
 
       // console.log(id, target_circle);
       d3.select("#experiences_circle-"+target_circle).style("opacity", OPACITY_ON)
@@ -619,7 +625,7 @@ svg.append("text")
 .text("Acitivity:"); // Text content
 
 svg.append("text")
-.attr("x", 150) // X-coordinate of the text
+.attr("x", 125) // X-coordinate of the text
 .attr("y", 500) // Y-coordinate of the text
 .text("Hover") // Text content
 .attr("id", "activity_txt"); // Set the id attribute
@@ -632,7 +638,7 @@ svg.append("text")
 .text("Experience:"); // Text content
 
 svg.append("text")
-.attr("x", 150) // X-coordinate of the text
+.attr("x", 125) // X-coordinate of the text
 .attr("y", 550) // Y-coordinate of the text
 .text("Hover") // Text content
 .attr("id", "experience_txt"); // Set the id attribute
