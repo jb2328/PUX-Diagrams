@@ -52,6 +52,19 @@ let experiences_html="";
 // Your list of elements
 let list = ["IA", "SA", "CA", "VE", "SE", "ME", "TE", "IE", "PE", "CE"];
 
+let list_definitions = {"IA":"Interpretation Activities",
+                        "SA":"Social Activities", 
+                        "CA":"Construction Activities",
+                        "VE":"Visibility", 
+                        "SE":"Structure", 
+                        "ME":"Meaning", 
+                        "TE":"Thinking", 
+                        "IE":"Interaction", 
+                        "PE":"Process", 
+                        "CE":"Creativity"
+                      };
+
+
 // Function to interpolate between two numbers
 function interpolate(a, b, t) {
   return a + (b - a) * t;
@@ -66,8 +79,8 @@ list.forEach(function (element, index) {
 });
 
   // Scale for positioning children and parents
-  const xScale = d3.scalePoint().domain(uniqueChildren).range([50, width - 50]).padding(0.5);
-  const yScale = d3.scalePoint().domain(activitiesWithChildren.map(d => d.name)).range([50, width - 50]).padding(0.5);
+  const xScale = d3.scalePoint().domain(uniqueChildren).range([50, width - 60]).padding(0.5);
+  const yScale = d3.scalePoint().domain(activitiesWithChildren.map(d => d.name)).range([50, width - 60]).padding(0.5);
   
   // Line generator for curvy lines
   const line = d3.line().curve(d3.curveBasis);
@@ -350,7 +363,7 @@ svg.append("g")
 
       const found_parent = inputData.find(item => item.name === entry);
 
-      parent_text+="("+entry+")  "+found_parent.id+", \n";
+      parent_text+="("+entry+")  "+found_parent.id+" \n";
 
       // console.log("entry", entry,colorMap[entry.slice(0, 2)])
       d3.select("#"+entry+"-"+d)
@@ -360,8 +373,9 @@ svg.append("g")
 
     }
 
+    d3.select("#experience_definition").text("");
+    d3.select("#experience_definition").text(list_definitions[d.slice(0, 2)]);
 
-console.log(parent_text)
 
 let split_text=parent_text.split("\n")
 
@@ -382,7 +396,7 @@ d3.select("#activity_txt")
 
      //-------------- duplicated code
      const foundObject = newData.find(item => item.name === d);
-     experiences+=(" ("+d+")  "+foundObject.id+", \n");
+     experiences+=(" ("+d+")  "+foundObject.id+" \n");
     split_text=experiences.split("\n")
 
     // d3.select("#experience_txt")
@@ -390,7 +404,7 @@ d3.select("#activity_txt")
 
  d3.select("#experience_txt")
     .text("")
-      .text(" ("+d+")  "+foundObject.id+", \n");
+      .text(" ("+d+")  "+foundObject.id+" \n");
 //------------
 
     d3.selectAll(".experience_circle")
@@ -462,7 +476,7 @@ d3.select("#activity_txt")
           console.log("id", id,"ERROR?",foundObject, "target",target_circle)
 
         }
-        positive_experience+=(" ("+target_circle+")   "+foundObject.id+", \n");
+        positive_experience+=(" ("+target_circle+")   "+foundObject.id+" \n");
   
   
     });
@@ -478,7 +492,7 @@ d3.select("#activity_txt")
           console.log("id", id,"ERROR?",foundObject, "target",target_circle)
         }
 
-      negative_experience+=(" ("+target_circle+")   \t"+foundObject.id+", \n");
+      negative_experience+=(" ("+target_circle+")   \t"+foundObject.id+" \n");
 
       // console.log(id, target_circle);
       d3.select("#experiences_circle-"+target_circle).style("opacity", OPACITY_ON)
@@ -513,11 +527,17 @@ d3.select("#activity_txt")
                .selectAll("tspan")
                .remove() // Remove any existing tspan elements
                .data(split_negative) // Split the text into an array based on line breaks
+               
                .enter()
                .append("tspan")
+
+               
                .attr("x", START_NEGATIVE_X) // Adjust the x-coordinate as needed
                .attr("dy", (d, i) => i==0?0:15) // Adjust the line height as needed
                .text(d => d);
+
+                 
+      
 
 
           d3.select("#positive_experience")
@@ -531,9 +551,35 @@ d3.select("#activity_txt")
           .attr("dy", (d, i) => i==0?0:15) // Adjust the line height as needed
           .text(d => d);
 
+          d3.selectAll(".temp-circle").remove();
 
+          for(let i=0;i<split_positive.length-1;i++){
+            svg
+            .append("g")
+            .attr("class", "temp-circle")
+                 .append('circle')
+                 .attr('cx',START_POSITIVE_X-7)
+                 .attr("cy",  511.5+i*15)
+                 .attr('r',"5px")
+                .style('fill',colorMap[split_positive[i].slice(2, 4)]);
+          }
+          
+          for(let i=0;i<split_negative.length-1;i++){
+            svg
+            .append("g")
+            .attr("class", "temp-circle")
+                 .append('circle')
+                 .attr('cx',START_NEGATIVE_X-7)
+                 .attr("cy",  511.5+i*15)
+                 .attr('r',"5px")
+                .style('fill',colorMap[split_negative[i].slice(2, 4)]);
+          }
+
+              
   })
   .on("mouseout", function(event, d) {
+    d3.selectAll(".temp-circle").remove();
+
 
     d3.selectAll(".activities_path")
     .style("stroke", STROKE_COLOR_OFF)
@@ -614,6 +660,14 @@ function findNameByImport(importValue) {
   return list_of_matches;
 }
 
+// Text at the top right:
+// ACTIVITIES
+svg.append("text")
+.attr("x", 910) // X-coordinate of the text
+.attr("y", 250) // Y-coordinate of the text
+.style("font-style", "italic")
+.attr("id", "experience_definition") // Set the id attribute
+.text("Hover over an experience"); // Text content
 
 
   // TEXT AT THE BOTTOM:
@@ -671,3 +725,26 @@ svg.append("text")
 .attr("y", 515) // Y-coordinate of the text
 .text("Select Experience") // Text content
 .attr("id", "negative_experience"); // Set the id attribute
+
+
+
+// Descriptions for activities
+
+// ACTIVITIES
+svg.append("text")
+.attr("x", 135) // X-coordinate of the text
+.attr("y", 440) // Y-coordinate of the text
+.style("font-style", "italic")
+.text("Interpretation activities"); // Text content
+
+svg.append("text")
+.attr("x", 450) // X-coordinate of the text
+.attr("y", 440) // Y-coordinate of the text
+.style("font-style", "italic")
+.text("Construction activities"); // Text content
+
+svg.append("text")
+.attr("x", 750) // X-coordinate of the text
+.attr("y", 440) // Y-coordinate of the text
+.style("font-style", "italic")
+.text("Social activities"); // Text content
