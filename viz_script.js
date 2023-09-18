@@ -113,12 +113,12 @@ list.forEach(function (element, index) {
     d.link_positive.forEach(linkObj => {
       const targetName = Object.keys(linkObj)[0];
       const strength = linkObj[targetName];
-      childLinks.push({ source_id:d.name,target_id:targetName,source: xScale(d.name), target: xScale(targetName), color: "red", strength: strength });
+      childLinks.push({ source_id:d.name,target_id:targetName,source: xScale(d.name), target: xScale(targetName), color: "gray", strength: strength });
     });
     d.link_negative.forEach(linkObj => {
       const targetName = Object.keys(linkObj)[0];
       const strength = linkObj[targetName];
-      childLinks.push({ source_id:d.name,target_id:targetName,source: xScale(d.name), target: xScale(targetName), color: "blue", strength: strength });
+      childLinks.push({ source_id:d.name,target_id:targetName,source: xScale(d.name), target: xScale(targetName), color: "gray", strength: strength });
     });
   });
 
@@ -170,7 +170,18 @@ svg.append("g")
     d3.selectAll(".activity_circle")
       .on("mouseover", function(event, d) {
 
-        d3.select("#activity_txt").text(d.id +" ("+d.name+")");
+        d3.select("#activity_txt").text("("+d.name+") "+d.id);
+
+  svg
+  .append("g")
+  .attr("class", "temp-circle")
+      .append('circle')
+      .attr('cx',116.5)
+      .attr("cy", 497)
+      .attr('r',"5px")
+      .style('fill', colorMap[d.name.slice(0, 2)]);
+      
+
         console.log(d);
 
         let source=d.name;
@@ -182,8 +193,8 @@ svg.append("g")
 
         const foundObject = newData.find(item => item.name === target);
 
-          experiences+=(foundObject.id+" ("+target+")"+", \n");
-          experiences_html+=`<span style="color: ${colorMap[target]};">${target}</span> <h5>${foundObject.id}</h5><br>`;
+          experiences+=("("+target+") "+foundObject.id+"\n");
+          // experiences_html+=`<span style="color: ${colorMap[target]};">${target}</span> <h5>${foundObject.id}</h5><br>`;
 
           d3.select("#"+source+"-"+target)
           .style("stroke", colorMap[source.slice(0, 2)])
@@ -193,6 +204,21 @@ svg.append("g")
         });
 
         let split_text=experiences.split("\n")
+
+
+      for(let i=0;i<split_text.length-1;i++){
+  
+        svg
+        .append("g")
+        .attr("class", "temp-circle")
+            .append('circle')
+            .attr('cx',116.5)
+            .attr("cy", 547+i*15)
+            .attr('r',"5px")
+            .style('fill', colorMap[split_text[i].slice(1, 3)]);
+            }
+
+        d3.select("#experience_txt").text("");
 
       d3.select("#experience_txt")
            .attr("text-anchor", "start") // Adjust as needed
@@ -212,10 +238,14 @@ svg.append("g")
     })
     
     .on("mouseout", function(event, d) {
+
+      d3.selectAll(".temp-circle").remove();
+
+
       // svg.selectAll(".experiences_txt")
       //   .style("font-weight", "normal");
       d3.select("#activity_txt").text("");
-      experiences=""
+      experiences="";
       d3.select("#experience_txt").text(experiences);
 
 
@@ -336,6 +366,7 @@ svg.append("g")
         // });
     })
     .on("mouseout", function(event, d) {
+      
       svg.selectAll(".experiences_txt")
         .style("font-weight", "normal");
   
@@ -377,9 +408,24 @@ svg.append("g")
     d3.select("#experience_definition").text(list_definitions[d.slice(0, 2)]);
 
 
-let split_text=parent_text.split("\n")
+    d3.selectAll(".temp-circle").remove();
 
-d3.select("#activity_txt").text("")
+
+let split_text=parent_text.split("\n");
+
+
+for(let i=0;i<split_text.length-1;i++){
+    svg
+    .append("g")
+    .attr("class", "temp-circle")
+        .append('circle')
+        .attr('cx',116.5)
+        .attr("cy", 497+i*15)
+        .attr('r',"5px")
+        .style('fill', colorMap[split_text[i].slice(1, 3)]);
+        }
+
+d3.select("#activity_txt").text("");
 
 
 d3.select("#activity_txt")
@@ -394,17 +440,32 @@ d3.select("#activity_txt")
      .text(d => d);
 
 
+
      //-------------- duplicated code
      const foundObject = newData.find(item => item.name === d);
-     experiences+=(" ("+d+")  "+foundObject.id+" \n");
-    split_text=experiences.split("\n")
-
+     experiences+=("("+d+")  "+foundObject.id+" \n");
+    let split_text_exp=experiences.split("\n");
+        experiences='';
     // d3.select("#experience_txt")
     //   .text("");
 
  d3.select("#experience_txt")
     .text("")
       .text(" ("+d+")  "+foundObject.id+" \n");
+
+
+
+for(let i=0;i<split_text_exp.length-1;i++){
+  
+  svg
+  .append("g")
+  .attr("class", "temp-circle")
+      .append('circle')
+      .attr('cx',116.5)
+      .attr("cy", 547+i*15)
+      .attr('r',"5px")
+      .style('fill', colorMap[split_text_exp[i].slice(1, 3)]);
+      }
 //------------
 
     d3.selectAll(".experience_circle")
@@ -551,7 +612,6 @@ d3.select("#activity_txt")
           .attr("dy", (d, i) => i==0?0:15) // Adjust the line height as needed
           .text(d => d);
 
-          d3.selectAll(".temp-circle").remove();
 
           for(let i=0;i<split_positive.length-1;i++){
             svg
@@ -578,6 +638,9 @@ d3.select("#activity_txt")
               
   })
   .on("mouseout", function(event, d) {
+
+    d3.select("#experience_definition").text("Hover over");
+
     d3.selectAll(".temp-circle").remove();
 
 
