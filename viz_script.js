@@ -23,6 +23,9 @@ const CIRCLE_RADIUS = "11px";
 const START_POSITIVE_X = 380;
 const START_NEGATIVE_X = 700;
 
+// location of the experience id locs
+const EXP_ID_TXT=270;
+
 // Create the SVG container
 const svg = d3
   .select("body")
@@ -37,16 +40,16 @@ let experiences_html = "";
 let list = ["IA", "SA", "CA", "VE", "SE", "ME", "TE", "IE", "PE", "CE"];
 
 let list_definitions = {
-  IA: "Interpretation Activities",
-  SA: "Social Activities",
-  CA: "Construction Activities",
-  VE: "Visibility",
-  SE: "Structure",
-  ME: "Meaning",
-  TE: "Thinking",
-  IE: "Interaction",
-  PE: "Process",
-  CE: "Creativity",
+  "IA": "Interpretation Activities",
+  "SA": "Social Activities",
+  "CA": "Construction Activities",
+  "VE": "Visibility",
+  "SE": "Structure",
+  "ME": "Meaning",
+  "TE": "Thinking",
+  "IE": "Interaction",
+  "PE": "Process",
+  "CE": "Creativity",
 };
 
 // Function to interpolate between two numbers
@@ -83,6 +86,7 @@ const xScale = d3
   .domain(uniqueChildren)
   .range([50, width - 60])
   .padding(0.5);
+
 const yScale = d3
   .scalePoint()
   .domain(activitiesWithChildren.map((d) => d.name))
@@ -283,6 +287,26 @@ svg
   .attr("r", CIRCLE_RADIUS)
   .style("fill", (d) => colorMap[d.slice(0, 2)]);
 
+
+  const ICON_HEIGHT=11*2;
+  const ICON_WIDTH=11*2
+
+  svg
+  .append("g")
+  .selectAll("image.children")
+  .data(uniqueChildren)
+  .enter()
+  .append("image")
+  .attr("pointer-events", "none")
+  .attr("id", (d) => `experiences_icon-${d}`)
+  .attr("class", "experience_icon")
+  .attr("xlink:href", (d) => "./icons/" + d.slice(0, 2) + "/" + d + ".png") //OR SVG
+  .attr("x", (d) => parseInt(xScale(d)) - ICON_WIDTH / 2)
+  .attr("y", 248 - ICON_HEIGHT / 2)
+  .attr("width", ICON_WIDTH)
+  .attr("height", ICON_HEIGHT);
+
+
 // Draw text labels for unique children
 svg
   .append("g")
@@ -293,7 +317,7 @@ svg
   .attr("class", "experiences_txt")
   .style("pointer-events", "none")
   .attr("x", (d) => xScale(d))
-  .attr("y", 250)
+  .attr("y", EXP_ID_TXT)
   .attr("text-anchor", "middle")
   .text((d) => d)
   .attr("id", (d) => `experience-${d}`);
@@ -620,4 +644,3 @@ d3.selectAll(".experience_circle")
   
   
   textData.forEach(({x, y, style, text, id}) => addText(x, y, style, text, id));
-  
