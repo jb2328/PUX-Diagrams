@@ -323,56 +323,56 @@ svg
   .attr("id", (d) => `experience-${d}`);
 
 // Add mouseover and mouseout events to paths
-d3.selectAll(".experiences_path")
-  .on("mouseover", function (event, d) {
-    d3.select(`#experience-${d.target_id}`).style("font-weight", "bolder");
-    d3.select(`#experience-${d.source_id}`).style("font-weight", "bolder");
+// d3.selectAll(".experiences_path")
+//   .on("mouseover", function (event, d) {
+//     d3.select(`#experience-${d.target_id}`).style("font-weight", "bolder");
+//     d3.select(`#experience-${d.source_id}`).style("font-weight", "bolder");
 
-    svg
-      .selectAll(".experiences_path")
-      .style("stroke", "#555")
-      .style("stroke-opacity", OPACITY_OFF);
+//     svg
+//       .selectAll(".experiences_path")
+//       .style("stroke", "#555")
+//       .style("stroke-opacity", OPACITY_OFF);
 
-    d3.select(`#${d.source_id}-${d.target_id}`)
-      .style("stroke", d.color)
-      .style("fill", "none")
-      .style("stroke-opacity", OPACITY_ON);
-  })
-  .on("mouseout", function (event, d) {
-    svg.selectAll(".experiences_txt").style("font-weight", "normal");
-    svg
-      .selectAll(".experiences_path")
-      .style("fill", "none")
-      .style("stroke", (d) => d.color)
-      .style("stroke-width", STROKE_WIDTH_OFF)
-      .style("stroke-opacity", OPACITY_OFF);
-  });
+//     d3.select(`#${d.source_id}-${d.target_id}`)
+//       .style("stroke", d.color)
+//       .style("fill", "none")
+//       .style("stroke-opacity", OPACITY_ON);
+//   })
+//   .on("mouseout", function (event, d) {
+//     svg.selectAll(".experiences_txt").style("font-weight", "normal");
+//     svg
+//       .selectAll(".experiences_path")
+//       .style("fill", "none")
+//       .style("stroke", (d) => d.color)
+//       .style("stroke-width", STROKE_WIDTH_OFF)
+//       .style("stroke-opacity", OPACITY_OFF);
+//   });
 
-d3.selectAll(".experiences_path")
-  .on("mouseover", (event, d) => {
-    d3.select(`#experience-${d.target_id}`).style("font-weight", "bolder");
-    d3.select(`#experience-${d.source_id}`).style("font-weight", "bolder");
+// d3.selectAll(".experiences_path")
+//   .on("mouseover", (event, d) => {
+//     d3.select(`#experience-${d.target_id}`).style("font-weight", "bolder");
+//     d3.select(`#experience-${d.source_id}`).style("font-weight", "bolder");
 
-    svg
-      .selectAll(".experiences_path")
-      .style("stroke", STROKE_WIDTH_OFF)
-      .style("stroke-opacity", OPACITY_OFF);
+//     svg
+//       .selectAll(".experiences_path")
+//       .style("stroke", STROKE_WIDTH_OFF)
+//       .style("stroke-opacity", OPACITY_OFF);
 
-    d3.select(`#${d.source_id}-${d.target_id}`)
-      .style("stroke", d.color)
-      .style("fill", "none")
-      .style("stroke-opacity", OPACITY_ON);
-  })
-  .on("mouseout", (event, d) => {
-    svg.selectAll(".experiences_txt").style("font-weight", "normal");
-    svg
-      .selectAll(".experiences_path")
-      .data(childLinks)
-      .style("fill", "none")
-      .style("stroke", (d) => d.color)
-      .style("stroke-width", STROKE_COLOR_ON)
-      .style("stroke-opacity", OPACITY_OFF);
-  });
+//     d3.select(`#${d.source_id}-${d.target_id}`)
+//       .style("stroke", d.color)
+//       .style("fill", "none")
+//       .style("stroke-opacity", OPACITY_ON);
+//   })
+//   .on("mouseout", (event, d) => {
+//     svg.selectAll(".experiences_txt").style("font-weight", "normal");
+//     svg
+//       .selectAll(".experiences_path")
+//       .data(childLinks)
+//       .style("fill", "none")
+//       .style("stroke", (d) => d.color)
+//       .style("stroke-width", STROKE_COLOR_ON)
+//       .style("stroke-opacity", OPACITY_OFF);
+//   });
 
 // Function to update text
 function updateText(selector, data, startX) {
@@ -404,6 +404,8 @@ function appendCircles(svg, textArray, startCy, colorMap) {
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
     // SHOW PARENT/ROOT CIRCLES
+
+    document.getElementById("uniqueId").innerHTML=d;
 
     let parent_list = findNameByImport(d);
     let parent_text = "";
@@ -598,6 +600,9 @@ d3.selectAll(".experience_circle")
     );
   })
   .on("mouseout", function (event, d) {
+
+    document.getElementById("uniqueId").innerHTML="";
+
     d3.select("#experience_definition").text("Hover over");
 
     d3.selectAll(".temp-circle").remove();
