@@ -18,7 +18,8 @@ const BACKWARD_LINK_COLOR = "red";
 const OPACITY_ON = 1;
 const OPACITY_OFF = 0.2;
 
-const CIRCLE_RADIUS = "11px";
+const CIRCLE_RADIUS=11;
+const CIRCLE_RADIUS_PX = CIRCLE_RADIUS+"px";
 
 const START_POSITIVE_X = 380;
 const START_NEGATIVE_X = 700;
@@ -191,7 +192,7 @@ const nodes = svg
   .attr("class", "activity_circle")
   .attr("cx", (d) => yScale(d.name))
   .attr("cy", yParent)
-  .attr("r", CIRCLE_RADIUS)
+  .attr("r", CIRCLE_RADIUS_PX)
   .attr("fill", (d) => colorMap[d.name.slice(0, 2)]);
 
 d3.selectAll(".activity_circle")
@@ -284,12 +285,12 @@ svg
   .attr("class", "experience_circle")
   .attr("cx", (d) => xScale(d))
   .attr("cy", 248)
-  .attr("r", CIRCLE_RADIUS)
+  .attr("r", CIRCLE_RADIUS_PX)
   .style("fill", (d) => colorMap[d.slice(0, 2)]);
 
 
-  const ICON_HEIGHT=11*2;
-  const ICON_WIDTH=11*2
+  const ICON_HEIGHT=CIRCLE_RADIUS*2;
+  const ICON_WIDTH=CIRCLE_RADIUS*2;
 
   svg
   .append("g")
@@ -300,7 +301,8 @@ svg
   .attr("pointer-events", "none")
   .attr("id", (d) => `experiences_icon-${d}`)
   .attr("class", "experience_icon")
-  .attr("xlink:href", (d) => "./icons/" + d.slice(0, 2) + "/" + d + ".png") //OR SVG
+  // .attr("xlink:href", (d) => "./icons/" + d.slice(0, 2) + "/" + d + ".png") //OR SVG
+  .attr("xlink:href", (d) => "./icons/vector/" + d + ".svg") //OR SVG
   .attr("x", (d) => parseInt(xScale(d)) - ICON_WIDTH / 2)
   .attr("y", 248 - ICON_HEIGHT / 2)
   .attr("width", ICON_WIDTH)
