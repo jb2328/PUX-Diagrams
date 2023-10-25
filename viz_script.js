@@ -24,6 +24,10 @@ const CIRCLE_RADIUS_PX = CIRCLE_RADIUS+"px";
 const START_POSITIVE_X = 380;
 const START_NEGATIVE_X = 700;
 
+
+const Y_EXPERIENCES=400;
+const Y_ACTIVITIES=250;
+
 // location of the experience id locs
 const EXP_ID_TXT=270;
 
@@ -36,22 +40,6 @@ const svg = d3
 
 let experiences = "";
 let experiences_html = "";
-
-// Your list of elements
-let list = ["IA", "SA", "CA", "VE", "SE", "ME", "TE", "IE", "PE", "CE"];
-
-let list_definitions = {
-  "IA": "Interpretation Activities",
-  "SA": "Social Activities",
-  "CA": "Construction Activities",
-  "VE": "Visibility",
-  "SE": "Structure",
-  "ME": "Meaning",
-  "TE": "Thinking",
-  "IE": "Interaction",
-  "PE": "Process",
-  "CE": "Creativity",
-};
 
 // Function to interpolate between two numbers
 function interpolate(a, b, t) {
@@ -77,7 +65,7 @@ let colorScale = d3.scaleOrdinal(d3.schemeTableau10);
 
 // Create a color map for your list
 let colorMap = {};
-list.forEach(function (element, index) {
+pux_list.forEach(function (element, index) {
   colorMap[element] = colorScale(index);
 });
 
@@ -102,15 +90,15 @@ const controlPointFactor = 0.9; // Adjust this factor to control the sharpness
 inputData.forEach((activity) => {
   activity.imports.forEach((child) => {
     const points = [
-      [yScale(activity.name), 400],
+      [yScale(activity.name), Y_EXPERIENCES],
       [
         interpolate(yScale(activity.name), xScale(child), controlPointFactor),
-        (400 + 250) / 2,
+        (Y_EXPERIENCES + Y_ACTIVITIES) / 2,
       ],
-      [xScale(child), 250],
+      [xScale(child), Y_ACTIVITIES],
     ];
 
-    console.log("PRINTING", activity.name, child);
+    // console.log("PRINTING", activity.name, child);
     svg
       .append("path")
       .attr("d", line(points))
@@ -121,6 +109,22 @@ inputData.forEach((activity) => {
       .attr("stroke-opacity", OPACITY_OFF);
   });
 });
+
+const yChild = Y_ACTIVITIES-9;
+const yParent = Y_EXPERIENCES+8;
+const strokeWidth = 1;
+
+// Helper function for generating path string
+function getPathString(d) {
+  const path = d3.path();
+  const curveHeight =
+    yChild -
+    1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) +
+    Math.random() * 25;
+  path.moveTo(d.source, yChild);
+  path.quadraticCurveTo(d.source, curveHeight, d.target, yChild);
+  return path.toString();
+}
 
 const childLinks = [];
 newData.forEach((d) => {
@@ -149,22 +153,6 @@ newData.forEach((d) => {
     });
   });
 });
-
-const yChild = 241;
-const yParent = 408;
-const strokeWidth = 1;
-
-// Helper function for generating path string
-function getPathString(d) {
-  const path = d3.path();
-  const curveHeight =
-    yChild -
-    1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) +
-    Math.random() * 25;
-  path.moveTo(d.source, yChild);
-  path.quadraticCurveTo(d.source, curveHeight, d.target, yChild);
-  return path.toString();
-}
 
 // Draw arc-shaped links
 const links = svg
@@ -197,6 +185,9 @@ const nodes = svg
 
 d3.selectAll(".activity_circle")
   .on("mouseover", function (event, d) {
+
+    document.getElementById("pux_header").innerHTML=PUX_COMPLETE[d.name].id +": "+PUX_COMPLETE[d.name].name;
+
     d3.select("#activity_txt").text(`(${d.name}) ${d.id}`);
 
     svg
@@ -248,6 +239,8 @@ d3.selectAll(".activity_circle")
       .text((d) => d);
   })
   .on("mouseout", function (event, d) {
+    document.getElementById("pux_header").innerHTML="";
+
     d3.selectAll(".temp-circle").remove();
     d3.select("#activity_txt").text("");
     d3.select("#experience_txt").text("");
@@ -269,7 +262,7 @@ svg
   .attr("class", "activities_txt")
   .style("pointer-events", "none")
   .attr("x", (d) => yScale(d.name))
-  .attr("y", 410)
+  .attr("y", Y_EXPERIENCES+10)
   .attr("text-anchor", "middle")
   .text((d) => d.name)
   .attr("id", (d) => `activity-${d.name}`);
@@ -284,10 +277,9 @@ svg
   .attr("id", (d) => `experiences_circle-${d}`)
   .attr("class", "experience_circle")
   .attr("cx", (d) => xScale(d))
-  .attr("cy", 248)
+  .attr("cy", Y_ACTIVITIES-2)
   .attr("r", CIRCLE_RADIUS_PX)
   .style("fill", (d) => colorMap[d.slice(0, 2)]);
-
 
   const ICON_HEIGHT=CIRCLE_RADIUS*2;
   const ICON_WIDTH=CIRCLE_RADIUS*2;
@@ -407,7 +399,7 @@ d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
     // SHOW PARENT/ROOT CIRCLES
 
-    document.getElementById("uniqueId").innerHTML=d;
+    document.getElementById("pux_header").innerHTML=PUX_COMPLETE[d].id +": "+PUX_COMPLETE[d].name;
 
     let parent_list = findNameByImport(d);
     let parent_text = "";
@@ -422,7 +414,7 @@ d3.selectAll(".experience_circle")
     });
 
     d3.select("#experience_definition").text("");
-    d3.select("#experience_definition").text(list_definitions[d.slice(0, 2)]);
+    d3.select("#experience_definition").text(pux_list_definitions[d.slice(0, 2)]);
 
     d3.selectAll(".temp-circle").remove();
 
@@ -603,7 +595,7 @@ d3.selectAll(".experience_circle")
   })
   .on("mouseout", function (event, d) {
 
-    document.getElementById("uniqueId").innerHTML="";
+    document.getElementById("pux_header").innerHTML="";
 
     d3.select("#experience_definition").text("Hover over");
 
