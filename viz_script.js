@@ -45,11 +45,18 @@ const VIZ_MODE=0;
 const EXP_ID_TXT=270;
 
 // Create the SVG container
+// const svg = d3
+//   .select("body")
+//   .append("svg")
+//   .attr("width", width)
+//   .attr("height", height);
 const svg = d3
-  .select("body")
+  .select("#svg-container")
   .append("svg")
   .attr("width", width)
   .attr("height", height);
+
+  
 
 let experiences = "";
 let experiences_html = "";
@@ -196,7 +203,12 @@ d3.selectAll(".activity_circle")
 
     document.getElementById("pux_header_id").innerHTML=pux_list_definitions[d.name.slice(0, 2)]+" "+ PUX_COMPLETE[d.name].id[2];
     document.getElementById("pux_header_id").style.color = colorMap[d.name.slice(0, 2)];
+
     document.getElementById("pux_header_name").innerHTML=": "+PUX_COMPLETE[d.name].name;
+    
+    document.getElementById("short_paragraph").innerHTML=PUX_COMPLETE[d.name].short_description;
+    document.getElementById("long_paragraph").innerHTML=PUX_COMPLETE[d.name].long_description;
+
 
     d3.select("#activity_txt").text(`(${d.name}) ${d.id}`);
 
@@ -251,6 +263,10 @@ d3.selectAll(".activity_circle")
   .on("mouseout", function (event, d) {
     document.getElementById("pux_header_id").innerHTML="";
     document.getElementById("pux_header_name").innerHTML="";
+
+    document.getElementById("short_paragraph").innerHTML="";
+    document.getElementById("long_paragraph").innerHTML="";
+
 
     d3.selectAll(".temp-circle").remove();
     d3.select("#activity_txt").text("");
@@ -452,6 +468,10 @@ d3.selectAll(".experience_circle")
     document.getElementById("pux_header_id").innerHTML=pux_list_definitions[d.slice(0, 2)]+" "+ PUX_COMPLETE[d].id[2];
     document.getElementById("pux_header_id").style.color = colorMap[d.slice(0, 2)];
     document.getElementById("pux_header_name").innerHTML=": "+PUX_COMPLETE[d].name;
+
+    document.getElementById("short_paragraph").innerHTML=PUX_COMPLETE[d].short_description;
+    document.getElementById("long_paragraph").innerHTML=PUX_COMPLETE[d].long_description;
+
 
     let parent_list = findNameByImport(d);
     let parent_text = "";

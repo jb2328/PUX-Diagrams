@@ -15,20 +15,60 @@
             font-size: 10px;
         }
 
+        #container {
+            display: flex;
+        }
+
+        #svg-container {
+            flex: 0 0 auto;
+        }
+
+        #text-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #short_paragraph, #long_paragraph {
+            flex: 1;
+        }
+
+        #short_paragraph{
+            font-size: 12px;
+        }
+        #long_paragraph{
+            font-size: 10px;
+        }
+
+
 
     </style>
 </head>
+
 <body>
     <h3>PUX
         <span id="pux_header_id"></span>
         <span id="pux_header_name"></span>
-
     </h3>
+    
+    <div id="container">
+        <div id="svg-container"></div>
+        <div id="text-container">
+          <div id="short_paragraph">
+            <p>Hover over icon.</p>
+          </div>
+          <div id="long_paragraph">
+            <p>Hover over icon.</p>
+          </div>
+        </div>
+      </div>
+      
+
     <script src="./PUX_data.js"></script>
     <script src="./experiences.js"></script>
     <script src="./helpers.js"></script>
     <script src="./color_map.js"></script>
     <script src="./viz_script.js"></script>
-
 </body>
+
 </html>
