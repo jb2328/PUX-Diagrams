@@ -287,19 +287,19 @@ const inputData =
 ];
 
 const secondaryData=[
-    {'name': 'VE2','in': ['IE5', 'CE3'],'out': ['IE2', 'VE5', 'TE4', 'ME6', 'SE1']},
+    {'name': 'IE1','in': ['PE1', 'IE2', 'PE3', 'IE3'],'out': ['CE4', 'ME1']},
     {'name': 'IE2', 'in': ['ME2', 'PE6'], 'out': ['PE2', 'SE2']},
-    {'name': 'ME4', 'in': ['ME6', 'PE2', 'TE5', 'ME1', 'TE2'], 'out': ['SE4']},
     {'name': 'IE3','in': ['PE5', 'VE5', 'SE1', 'ME2', 'ME6'], 'out': ['CE4', 'CE3']},
+    {'name': 'VE2','in': ['IE5', 'CE3'],'out': ['IE2', 'VE5', 'TE4', 'ME6', 'SE1']},
+    {'name': 'VE4', 'in': ['IE6'], 'out': ['SE1']},
     {'name': 'VE5', 'in': ['SE3', 'SE2', 'ME4'], 'out': ['ME3', 'IE2', 'CE4']},
-    {'name': 'PE6','in': ['ME3', 'PE5'],'out': ['CE1', 'SE2', 'PE1', 'ME5', 'IE6', 'IE1']},
     {'name': 'PE3','in': ['CE3', 'VE2', 'PE2', 'ME5', 'TE1'], 'out': ['TE5', 'PE4']},
+    {'name': 'PE6','in': ['ME3', 'PE5'],'out': ['CE1', 'SE2', 'PE1', 'ME5', 'IE6', 'IE1']},
+    {'name': 'SE1', 'in': ['TE2'], 'out': ['ME2']},
     {'name': 'SE3','in': ['ME4', 'PE1', 'ME6'],'out': ['IE5', 'PE6', 'CE2', 'IE2', 'SE1', 'VE3']},
     {'name': 'ME2','in': ['IE5', 'IE4', 'IE3', 'SE1', 'VE2'],'out': ['TE4', 'IE6']},
-    {'name': 'IE1','in': ['PE1', 'IE2', 'PE3', 'IE3'],'out': ['CE4', 'ME1']},
+    {'name': 'ME4', 'in': ['ME6', 'PE2', 'TE5', 'ME1', 'TE2'], 'out': ['SE4']},
     {'name': 'CE1','in': ['PE3', 'TE3', 'VE3', 'VE1', 'IE2', 'TE4'],'out': ['ME3']},
-    {'name': 'VE4', 'in': ['IE6'], 'out': ['SE1']},
-    {'name': 'SE1', 'in': ['TE2'], 'out': ['ME2']},
     {'name': 'TE2', 'in': ['ME4'], 'out': ['ME6', 'CE4']},
 
 ];

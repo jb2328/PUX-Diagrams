@@ -28,6 +28,8 @@ const START_NEGATIVE_X = 700;
 const Y_EXPERIENCES=400;
 const Y_ACTIVITIES=250;
 
+const VIZ_MODE=0;
+
 // location of the experience id locs
 const EXP_ID_TXT=270;
 
@@ -61,7 +63,20 @@ function findNameByImport(importValue) {
 }
 
 // Get the colors from d3.schemeTableau10
-let colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+// let colorScale = d3.scaleOrdinal(d3.schemeTableau10);
+let colorScale = d3.scaleOrdinal([
+  '#BAB0AC',  // Grey
+  '#EDC948', // Yellow
+  '#F28E2B', // Orange
+  '#76B7B2', // Cyan
+  '#59A14F', // Green
+  '#E15759', // Red
+  '#B07AA1', // Purple
+  '#FF9DA7', // Pink
+  '#9C755F', // Brown
+  '#4E79A7', // Blue
+
+]);
 
 // Create a color map for your list
 let colorMap = {};
@@ -114,47 +129,124 @@ const yChild = Y_ACTIVITIES-9;
 const yParent = Y_EXPERIENCES+8;
 const strokeWidth = 1;
 
-// Helper function for generating path string
+// Function to calculate posY based on VIZ_MODE
+function calculatePosY(d, width, height) {
+  let pos_y;
+  switch(VIZ_MODE) {
+    case 0:
+      pos_y = Y_ACTIVITIES - 2;
+      break;
+    case 1:
+      pos_y = -0.001 * Math.pow(xScale(d) - width / 2, 2) + height / 2.4;
+      break;
+    case 2:
+      pos_y = height - Math.sqrt(350 * 350 + Math.pow(xScale(d) - width / 2, 2));
+      break;
+    case 3:
+      pos_y = 700 - (7 * Math.cosh(0.01 * (xScale(d) - width / 2)) + 400);
+      break;
+    default:
+      pos_y = Y_ACTIVITIES - 2;
+      break;
+  }
+  return pos_y;
+}
+
+// Modify getPathString
 function getPathString(d) {
   const path = d3.path();
-  const curveHeight =
+  let curveHeight;
+
+  
+  switch(d.viz_mode) {
+    case 0:
+   curveHeight =
     yChild -
     1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) +
-    Math.random() * 25;
-  path.moveTo(d.source, yChild);
-  path.quadraticCurveTo(d.source, curveHeight, d.target, yChild);
+    Math.random() * 25;    
+      break;
+    case 1:
+      curveHeight = -0.001 * Math.pow(d.source - width/2, 2) + height/2.4;
+      break;
+    case 2:
+      curveHeight = height - Math.sqrt(350 * 350 + Math.pow(d.source - width/2, 2));
+      break;
+    case 3:
+      curveHeight = 700 - (7 * Math.cosh(0.01 * (d.source - width/2)) + 400);
+      break;
+    default:
+      curveHeight = yChild - 1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) + Math.random() * 25;   
+      
+      break;
+  }
+
+  path.moveTo(d.source, d.yNewCoord);
+  path.quadraticCurveTo(d.source, curveHeight, d.target, d.yNewCoord);
   return path.toString();
 }
 
+// // Helper function for generating path string
+// function getPathString(d) {
+//   const path = d3.path();
+//   const curveHeight =
+//     yChild -
+//     1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) +
+//     Math.random() * 25;
+//   path.moveTo(d.source, yChild);
+//   path.quadraticCurveTo(d.source, curveHeight, d.target, yChild);
+//   return path.toString();
+// }
+
 const childLinks = [];
+
 newData.forEach((d) => {
-  d.link_positive.forEach((linkObj) => {
-    const targetName = Object.keys(linkObj)[0];
-    const strength = linkObj[targetName];
-    childLinks.push({
-      source_id: d.name,
-      target_id: targetName,
-      source: xScale(d.name),
-      target: xScale(targetName),
-      color: "gray",
-      strength: strength,
-    });
-  });
-  d.link_negative.forEach((linkObj) => {
-    const targetName = Object.keys(linkObj)[0];
-    const strength = linkObj[targetName];
-    childLinks.push({
-      source_id: d.name,
-      target_id: targetName,
-      source: xScale(d.name),
-      target: xScale(targetName),
-      color: "gray",
-      strength: strength,
+  ['link_positive', 'link_negative'].forEach((linkType) => {
+    d[linkType].forEach((linkObj) => {
+      const targetName = Object.keys(linkObj)[0];
+      const strength = linkObj[targetName];
+      const pos_y = calculatePosY(d, width, height);
+      childLinks.push({
+        source_id: d.name,
+        target_id: targetName,
+        source: xScale(d.name),
+        target: xScale(targetName),
+        color: "gray",
+        strength: strength,
+        viz_mode: VIZ_MODE,
+        yNewCoord: pos_y
+      });
     });
   });
 });
 
-// Draw arc-shaped links
+// newData.forEach((d) => {
+//   d.link_positive.forEach((linkObj) => {
+//     const targetName = Object.keys(linkObj)[0];
+//     const strength = linkObj[targetName];
+//     childLinks.push({
+//       source_id: d.name,
+//       target_id: targetName,
+//       source: xScale(d.name),
+//       target: xScale(targetName),
+//       color: "gray",
+//       strength: strength,
+//     });
+//   });
+//   d.link_negative.forEach((linkObj) => {
+//     const targetName = Object.keys(linkObj)[0];
+//     const strength = linkObj[targetName];
+//     childLinks.push({
+//       source_id: d.name,
+//       target_id: targetName,
+//       source: xScale(d.name),
+//       target: xScale(targetName),
+//       color: "gray",
+//       strength: strength,
+//     });
+//   });
+// });
+
+// Draw arc-shaped links for EXPERIENCES
 const links = svg
   .append("g")
   .selectAll("path")
@@ -267,6 +359,8 @@ svg
   .text((d) => d.name)
   .attr("id", (d) => `activity-${d.name}`);
 
+
+
 // Draw circles for unique children
 svg
   .append("g")
@@ -277,7 +371,33 @@ svg
   .attr("id", (d) => `experiences_circle-${d}`)
   .attr("class", "experience_circle")
   .attr("cx", (d) => xScale(d))
-  .attr("cy", Y_ACTIVITIES-2)
+    // .attr("cy", Y_ACTIVITIES-2)
+  .attr("cy", (d) => {
+    let pos_y;
+
+    switch(VIZ_MODE) {
+      case 0:
+    pos_y=Y_ACTIVITIES-2;
+    break;
+      case 1:
+    pos_y=   -0.001 * Math.pow(xScale(d) - width/2, 2) + height/2.4;
+        break;
+      case 2:
+    pos_y=height - Math.sqrt(350 * 350 + Math.pow(xScale(d) - width/2, 2))
+    break;
+      case 3:
+    pos_y = 700 - (7 * Math.cosh(0.01 * (xScale(d) - width/2)) +  400);  
+    break;
+      default:
+    pos_y=Y_ACTIVITIES-2;
+    break;
+    }
+  
+    return pos_y
+  
+  })
+
+
   .attr("r", CIRCLE_RADIUS_PX)
   .style("fill", (d) => colorMap[d.slice(0, 2)]);
 
@@ -296,7 +416,36 @@ svg
   // .attr("xlink:href", (d) => "./icons/" + d.slice(0, 2) + "/" + d + ".png") //OR SVG
   .attr("xlink:href", (d) => "./icons/vector/" + d + ".svg") //OR SVG
   .attr("x", (d) => parseInt(xScale(d)) - ICON_WIDTH / 2)
-  .attr("y", 248 - ICON_HEIGHT / 2)
+  // .attr("y", 248 - ICON_HEIGHT / 2)
+  .attr("y",(d) => {
+   
+    let pos_y;
+
+    switch(VIZ_MODE) {
+      case 0:
+        pos_y = Y_ACTIVITIES - 13;
+        break;
+      case 1:
+        pos_y = -0.001 * Math.pow(xScale(d) - width / 2, 2) + height / 2.4 -13;
+        break;
+      case 2:
+        pos_y = height - Math.sqrt(350 * 350 + Math.pow(xScale(d) - width / 2, 2));
+        break;
+      case 3:
+        pos_y = 700 - (7 * Math.cosh(0.01 * (xScale(d) - width / 2)) + 400);
+        break;
+      default:
+        pos_y = Y_ACTIVITIES - 13;
+        break;
+    }
+  
+    return pos_y
+  
+  }
+  
+  
+  )
+
   .attr("width", ICON_WIDTH)
   .attr("height", ICON_HEIGHT);
 
@@ -310,6 +459,8 @@ svg
   .append("text")
   .attr("class", "experiences_txt")
   .style("pointer-events", "none")
+  .style("font-size", "8px") // Original font size
+  .style("fill", "darkgray") // Original color
   .attr("x", (d) => xScale(d))
   .attr("y", EXP_ID_TXT)
   .attr("text-anchor", "middle")
@@ -369,6 +520,7 @@ svg
 //   });
 
 // Function to update text
+
 function updateText(selector, data, startX) {
   d3.select(selector)
     .attr("text-anchor", "start")
@@ -397,6 +549,7 @@ function appendCircles(svg, textArray, startCy, colorMap) {
 
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
+
     // SHOW PARENT/ROOT CIRCLES
 
     document.getElementById("pux_header").innerHTML=PUX_COMPLETE[d].id +": "+PUX_COMPLETE[d].name;
@@ -643,3 +796,96 @@ d3.selectAll(".experience_circle")
   
   
   textData.forEach(({x, y, style, text, id}) => addText(x, y, style, text, id));
+
+
+
+
+  
+  const TRANSITION_TIME = 300;  // milliseconds
+  const SIZE_MULTIPLIER = 2.5;
+  
+  // Code ...
+  
+  // Append a group for each unique child
+  const groups = svg.selectAll(".child-group")
+    .data(uniqueChildren)
+    .enter()
+    .append("g")
+    .attr("transform", d => `translate(${xScale(d)}, ${Y_ACTIVITIES-2})`)
+    .on("mouseover", function() {
+      
+      d3.select(this).selectAll(".experience_circle")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .style("stroke", "black")
+        .style("stroke-width", "1.75")
+        .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER);
+
+      d3.select(this).selectAll(".experience_icon")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .attr("width", ICON_WIDTH * SIZE_MULTIPLIER)
+        .attr("height", ICON_HEIGHT * SIZE_MULTIPLIER)
+        .attr("x", -ICON_WIDTH * SIZE_MULTIPLIER / 2)
+        .attr("y", -ICON_HEIGHT * SIZE_MULTIPLIER / 2);
+
+// Bring to front
+this.parentElement.appendChild(this);
+
+// Append 'aura' circle
+  // Prepend 'aura' circle
+  const auraCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  auraCircle.setAttribute("class", "aura_circle");
+  auraCircle.setAttribute("r", 0);
+  auraCircle.style.fill = "white";
+  auraCircle.style.opacity = 0.5;
+  this.insertBefore(auraCircle, this.firstChild);
+
+  // Animate 'aura' circle
+  d3.select(auraCircle)
+    .transition()
+    .duration(TRANSITION_TIME)
+    .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER * 1.25);
+
+    
+
+    })
+    .on("mouseout", function() {
+      d3.select(this).selectAll(".experience_circle")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .style("stroke", "none")
+        .attr("r", CIRCLE_RADIUS);
+      d3.select(this).selectAll(".experience_icon")
+        .transition()
+        .duration(TRANSITION_TIME)
+        .attr("width", ICON_WIDTH)
+        .attr("height", ICON_HEIGHT)
+        .attr("x", -ICON_WIDTH / 2)
+        .attr("y", -ICON_HEIGHT / 2);
+
+         // Remove 'aura' circle
+  d3.select(this).select(".aura_circle")
+  .transition()
+  .duration(TRANSITION_TIME)
+  .attr("r", 0)
+  .remove();
+
+
+    });
+  
+  // Append circles to groups
+  groups.append("circle")
+    .attr("class", "experience_circle")
+    .attr("r", CIRCLE_RADIUS)
+    .style("fill", d => colorMap[d.slice(0, 2)]);
+  
+  // Append icons to groups
+  groups.append("image")
+    .attr("class", "experience_icon")
+    .attr("xlink:href", d => `./icons/vector/${d}.svg`)
+    .attr("x", -ICON_WIDTH / 2)
+    .attr("y", -ICON_HEIGHT / 2)
+    .attr("width", ICON_WIDTH)
+    .attr("height", ICON_HEIGHT);
+  
