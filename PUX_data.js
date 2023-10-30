@@ -282,9 +282,12 @@ const PUX_COMPLETE=
 const pux_list = ["IA", "SA", "CA", "VE", "SE", "ME", "TE", "IE", "PE", "CE"];
 
 const pux_list_definitions = {
-  "IA": "Interpretation Activities",
-  "SA": "Social Activities",
-  "CA": "Construction Activities",
+//   "IA": "Interpretation Activities",
+//   "SA": "Social Activities",
+//   "CA": "Construction Activities",
+  "IA": "Interpretation",
+  "SA": "Social",
+  "CA": "Construction",
   "VE": "Visibility",
   "SE": "Structure",
   "ME": "Meaning",

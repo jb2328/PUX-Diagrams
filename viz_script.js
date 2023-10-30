@@ -194,7 +194,7 @@ const nodes = svg
 d3.selectAll(".activity_circle")
   .on("mouseover", function (event, d) {
 
-    document.getElementById("pux_header_id").innerHTML=PUX_COMPLETE[d.name].id;
+    document.getElementById("pux_header_id").innerHTML=pux_list_definitions[d.name.slice(0, 2)]+" "+ PUX_COMPLETE[d.name].id[2];
     document.getElementById("pux_header_id").style.color = colorMap[d.name.slice(0, 2)];
     document.getElementById("pux_header_name").innerHTML=": "+PUX_COMPLETE[d.name].name;
 
@@ -449,7 +449,7 @@ d3.selectAll(".experience_circle")
         // exp_mouseover(this, d);
     // SHOW PARENT/ROOT CIRCLES
 
-    document.getElementById("pux_header_id").innerHTML=PUX_COMPLETE[d].id;
+    document.getElementById("pux_header_id").innerHTML=pux_list_definitions[d.slice(0, 2)]+" "+ PUX_COMPLETE[d].id[2];
     document.getElementById("pux_header_id").style.color = colorMap[d.slice(0, 2)];
     document.getElementById("pux_header_name").innerHTML=": "+PUX_COMPLETE[d].name;
 
