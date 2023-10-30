@@ -1,0 +1,41 @@
+body {
+    font-family: "Arial", sans-serif;
+    padding-left: 1em;  /* Left padding */
+    padding-right: 1em;  /* Right padding */
+
+}
+
+text {
+    font-size: 10px;
+}
+
+#container {
+    display: flex;
+}
+
+#svg-container {
+    flex: 0 0 auto;
+}
+
+#text-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 18em;  /* Adjust value as needed */
+
+}
+
+#short_paragraph, #long_paragraph {
+flex: 0 0 auto;
+}
+#short_paragraph{
+    font-size: 12px;
+    text-align: justify;
+
+}
+#long_paragraph{
+    font-size: 11px;
+    text-align: justify;
+
+}
+

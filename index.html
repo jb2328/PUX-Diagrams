@@ -6,43 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PUX</title>
     <script src="https://d3js.org/d3.v6.min.js"></script>
-    <style>
-        body {
-            font-family: "Arial", sans-serif;
-        }
+    <link rel="stylesheet" href="style.css">
 
-        text {
-            font-size: 10px;
-        }
-
-        #container {
-            display: flex;
-        }
-
-        #svg-container {
-            flex: 0 0 auto;
-        }
-
-        #text-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #short_paragraph, #long_paragraph {
-            flex: 1;
-        }
-
-        #short_paragraph{
-            font-size: 12px;
-        }
-        #long_paragraph{
-            font-size: 10px;
-        }
-
-
-
-    </style>
 </head>
 
 <body>
@@ -54,9 +19,14 @@
     <div id="container">
         <div id="svg-container"></div>
         <div id="text-container">
+            <span>Summary:</span>
+
           <div id="short_paragraph">
             <p>Hover over icon.</p>
           </div>
+          <br>
+          <span>Original Text:</span>
+
           <div id="long_paragraph">
             <p>Hover over icon.</p>
           </div>

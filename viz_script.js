@@ -3,8 +3,9 @@ const uniqueChildren = Array.from(new Set(inputData.flatMap((d) => d.imports)));
 const activitiesWithChildren = inputData;
 
 // Set dimensions
-const width = 960;
+const width = 1150;
 const height = 700;
+const padding=20;
 
 const STROKE_COLOR_ON = "green";
 const STROKE_COLOR_OFF = "#555";
@@ -18,9 +19,6 @@ const BACKWARD_LINK_COLOR = "red";
 const OPACITY_ON = 1;
 const OPACITY_OFF = 0.2;
 
-const CIRCLE_RADIUS=11;
-const CIRCLE_RADIUS_PX = CIRCLE_RADIUS+"px";
-
 const START_POSITIVE_X = 380;
 const START_NEGATIVE_X = 700;
 
@@ -29,12 +27,14 @@ const Y_EXPERIENCES=400;
 const Y_ACTIVITIES=250;
 
 // ------ICON PARAMETERS------//
+const CIRCLE_RADIUS=15;
+const CIRCLE_RADIUS_PX = CIRCLE_RADIUS+"px";
 // determines icons' size withing the bounding circle
 const ICON_MULTIPLIER=1.8;
 // icon transition growth time
 const TRANSITION_TIME = 300;  // milliseconds
 // how much larger should an icon get after how
-const SIZE_MULTIPLIER = 2.5;
+const SIZE_MULTIPLIER = 2;
 
 const ICON_HEIGHT=CIRCLE_RADIUS*ICON_MULTIPLIER;
 const ICON_WIDTH=CIRCLE_RADIUS*ICON_MULTIPLIER;
@@ -73,13 +73,13 @@ pux_list.forEach(function (element, index) {
 const xScale = d3
   .scalePoint()
   .domain(uniqueChildren)
-  .range([50, width - 60])
+  .range([padding, width - padding])
   .padding(0.5);
 
 const yScale = d3
   .scalePoint()
   .domain(activitiesWithChildren.map((d) => d.name))
-  .range([50, width - 60])
+  .range([padding, width - padding])
   .padding(0.5);
 
 // Line generator for curvy lines
@@ -386,7 +386,7 @@ svg
   }
 
 
-  // // Append circles to groups
+  // Append circles to groups
   // groups.append("circle")
   //   .attr("class", "experience_circle")
   //   .attr("id", (d) => `experiences_circle-${d}`)
@@ -485,8 +485,8 @@ d3.selectAll(".experience_circle")
         .style("stroke-opacity", OPACITY_ON);
     });
 
-    d3.select("#experience_definition").text("");
-    d3.select("#experience_definition").text(pux_list_definitions[d.slice(0, 2)]);
+    // d3.select("#experience_definition").text("");
+    // d3.select("#experience_definition").text(pux_list_definitions[d.slice(0, 2)]);
 
     d3.selectAll(".temp-circle").remove();
 
@@ -618,7 +618,7 @@ d3.selectAll(".experience_circle")
     document.getElementById("pux_header_id").innerHTML="";
     document.getElementById("pux_header_name").innerHTML="";
 
-    d3.select("#experience_definition").text("Hover over");
+    // d3.select("#experience_definition").text("Hover over");
 
     d3.selectAll(".temp-circle").remove();
 
@@ -646,7 +646,7 @@ d3.selectAll(".experience_circle")
 
 
   const textData = [
-    {text: "Hover over an experience", x: 910, y: 250, style: {"font-style": "italic"}, id: "experience_definition"},
+    // {text: "Hover over an experience", x: 910, y: 250, style: {"font-style": "italic"}, id: "experience_definition"},
     {text: "Activity:", x: 50, y: 500, style: {"font-weight": "bolder"}},
     {text: "Hover", x: 125, y: 500, id: "activity_txt"},
     {text: "Experience:", x: 50, y: 550, style: {"font-weight": "bolder"}},

@@ -95,7 +95,7 @@ const PUX_COMPLETE=
         "name": "You can see relationships between parts",
         "id": "SE1",
         "short_description": "Diagrams convey relationships; excess detail can obscure clarity and edits.",
-        "long_description": "SThe most obvious kinds of visual relation are elements located within the same bounded region, or with lines drawn between them. There are many other ways of establishing relations, of course. Are there multiple marks with the same colour, orientation, or size? Are there many verbal or numeric labels, some of which happen to be the same? In these cases, the user might have to search in order to find relationships (IA1 and IA2). If the layout is not concise (VE4) then there may be a simple problem of visibility (VE1, VE5). But it isn\u2019t possible to include every possible relationship, because the overall message would be lost (VE2, VE3). And every visible relationship introduces another element that may have to be changed if you change your mind (SE2)."
+        "long_description": "The most obvious kinds of visual relation are elements located within the same bounded region, or with lines drawn between them. There are many other ways of establishing relations, of course. Are there multiple marks with the same colour, orientation, or size? Are there many verbal or numeric labels, some of which happen to be the same? In these cases, the user might have to search in order to find relationships (IA1 and IA2). If the layout is not concise (VE4) then there may be a simple problem of visibility (VE1, VE5). But it isn\u2019t possible to include every possible relationship, because the overall message would be lost (VE2, VE3). And every visible relationship introduces another element that may have to be changed if you change your mind (SE2)."
     },
     "SE2": {
         "name": "You can change your mind easily",
@@ -261,7 +261,7 @@ const PUX_COMPLETE=
     "CE2": {
         "name": "You can redefine how it is interpreted",
         "id": "CE2",
-        "short_description": "",
+        "short_description": "Diagram interpretation varies; guiding humans and machines adds complexity.",
         "long_description": "Everybody who reads a diagram sees it in their own way. But sometimes the diagram author wants to suggest a particular reading (SA1), or even change the way the diagram would otherwise be interpreted (SA3). It is possible to suggest other interpretations to human readers by adding informal notes or guidance (ME5), but if the \u2018readers\u2019 of the diagram include computer programs, it is necessary to specify how the new interpretation should be processed. This could be as simple as modifying the visual appearance of elements or wording of labels (ME1, ME2, ME6), but it could take the form of defining one element in terms of another. As soon as such facilities become generically powerful, they start to gain the advantages \u2013 and also disadvantages \u2013 of abstract languages (CE1)."
     },
     "CE3": {
