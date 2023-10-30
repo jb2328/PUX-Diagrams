@@ -68,13 +68,21 @@ let colorScale = d3.scaleOrdinal([
   '#BAB0AC',  // Grey
   '#EDC948', // Yellow
   '#F28E2B', // Orange
-  '#76B7B2', // Cyan
-  '#59A14F', // Green
-  '#E15759', // Red
-  '#B07AA1', // Purple
-  '#FF9DA7', // Pink
-  '#9C755F', // Brown
-  '#4E79A7', // Blue
+  // '#76B7B2', // Cyan
+  // '#59A14F', // Green
+  // '#E15759', // Red
+  // '#B07AA1', // Purple
+  // '#FF9DA7', // Pink
+  // '#9C755F', // Brown
+  // '#4E79A7', // Blue
+
+  '#5E948F', // Cyan
+'#487D3E', // Green
+'#B94644', // Red
+'#8E6280', // Purple
+'#D67E8A', // Pink
+'#7A5E4A', // Brown
+'#3D6386' // Blue
 
 ]);
 
@@ -817,7 +825,7 @@ d3.selectAll(".experience_circle")
       d3.select(this).selectAll(".experience_circle")
         .transition()
         .duration(TRANSITION_TIME)
-        .style("stroke", "black")
+        .style("stroke", "gray")
         .style("stroke-width", "1.75")
         .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER);
 
