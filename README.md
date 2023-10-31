@@ -6,6 +6,8 @@ ReadMe written by ChatGPT with some minor modifications by jb2328.
 
 This repository contains the code and files for an interactive data visualization project. The visualization is designed to accompany the paper "A Pattern Language for the Design of Diagrams" by Alan Blackwell.
 
+![Screenshot of the visualisation](/files/pux_screenshot.png)
+
 ## Usage
 
 1. Clone this repository to your local machine.
@@ -13,8 +15,10 @@ This repository contains the code and files for an interactive data visualizatio
 3. Explore the interactive visualization to gain insights into the research paper's content.
 
 ## Directory Structure
-
+- `PUX_data.js`: Full PUX paragraphs and GPT4 generated summaries.
 - `experience.js`: Data structures and metadata for the visualization.
+- `helpers.js`: A bunch of helper functions to keep the main script clean.
+- `color_map.js`: D3.js colormaps to be swapped whenever needed.
 - `index.html`: Main HTML file where the visualization is displayed.
 - `viz_script.js`: Main visualization script.
 

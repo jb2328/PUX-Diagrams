@@ -33,8 +33,8 @@ const Y_ACTIVITIES=250;
 const CIRCLE_RADIUS=15;
 const CIRCLE_RADIUS_PX = CIRCLE_RADIUS+"px";
 
-const ICON_MULTIPLIER=1.8; // how much larger should an icon get after hover
 const SIZE_MULTIPLIER=  2; // how much larger should a circle get after hover
+const ICON_MULTIPLIER=SIZE_MULTIPLIER*0.9; // how much larger should an icon get after hover
 
 const TRANSITION_TIME = 300; // icon transition growth time 
 
