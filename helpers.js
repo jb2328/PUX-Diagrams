@@ -249,6 +249,11 @@ function set_html_text(d, mode='experience'){
     document.getElementById("short_paragraph").innerHTML=PUX_COMPLETE[d].short_description;
     document.getElementById("long_paragraph").innerHTML=PUX_COMPLETE[d].long_description;
 
+    document.getElementById("action_name").innerHTML=PUX_COMPLETE[d].name;
+    document.getElementById("action_name").style.color = colorMap[d.slice(0, 2)];
+
+
+
 
 }
 
@@ -258,6 +263,9 @@ function clear_html_text(){
 
     document.getElementById("short_paragraph").innerHTML="";
     document.getElementById("long_paragraph").innerHTML="";
+
+    document.getElementById("action_name").innerHTML="";
+
 }
 
 // clear d3 text and icons after mouseout on ACTIVITY circles
@@ -388,9 +396,9 @@ function experience_sentiments_bullets(d){
 
 function clean_experience_paths(){
     d3.selectAll(".experiences_path")
-    .interrupt()
-    .transition()
-    .duration(250)
+    // .interrupt()
+    // .transition()
+    // .duration(250)
     .style("stroke", STROKE_COLOR_OFF)
     .style("opacity", OPACITY_OFF)
     .style("stroke-width", STROKE_WIDTH_OFF);
@@ -435,4 +443,107 @@ function icon_zoom(d){
     // Move icon to top layer
     let iconNode = d3.select(icon_id).node();
     topLayer.node().appendChild(iconNode);
+}
+
+function icon_dezoom(d){
+    let circle_id='#experiences_circle-'+d;
+    let icon_id='#experiences_icon-'+d;
+
+    d3.select(circle_id)
+      .transition()
+      .duration(TRANSITION_TIME)
+      .style("stroke", "none")
+      .attr("r", CIRCLE_RADIUS_PX);
+
+    d3.select(icon_id)
+      .transition()
+      .duration(TRANSITION_TIME)
+      .attr("width", ICON_WIDTH)
+      .attr("height", ICON_HEIGHT)
+      .attr("x", d3.select(circle_id).attr("cx")-ICON_WIDTH/2)
+      .attr("y", d3.select(circle_id).attr("cy")-ICON_HEIGHT/2);
+}
+
+
+function add_strength_scale(){
+    const yAxisXPos = 19; // X position for the Y-axis
+    const yAxisY1Pos = Y_ACTIVITIES - 230; // Starting Y position for the Y-axis
+    const yAxisY2Pos = Y_ACTIVITIES - 20; // Ending Y position for the Y-axis
+    
+    // Create Y-axis group
+    const yAxisGroup = svg.append("g")
+      .attr("id", "scales")
+      .attr("transform", `translate(${yAxisXPos},0)`);
+    
+    // Draw Y-axis line
+    yAxisGroup.append("line")
+      .attr("x1", 0)
+      .attr("y1", yAxisY1Pos)
+      .attr("x2", 0)
+      .attr("y2", yAxisY2Pos)
+      .attr("stroke", "darkgray");
+    
+    // Draw arrow at the end
+    yAxisGroup.append("path")
+      .attr("d", `M 0 ${yAxisY1Pos} L -5 ${yAxisY1Pos + 5} L 5 ${yAxisY1Pos + 5} Z`)
+      .attr("fill", "darkgray");
+    
+    // Draw ticks and labels
+    for (let i = 0; i <= 5; i++) {
+    
+      // if (i==0){continue}
+      const yTickPos = yAxisY2Pos - i * 40; // 20 pixels between each tick
+      const tickValue = (i * 0.2).toFixed(1);
+      
+      yAxisGroup.append("line")
+        .attr("x1", -2)
+        .attr("y1", yTickPos)
+        .attr("x2", 2)
+        .attr("y2", yTickPos);
+        // .attr("stroke", "darkgray");
+    
+    yAxisGroup.append("text")
+      .attr("x", 2)
+      .attr("y", yTickPos - 0)
+      .attr("text-anchor", "end")
+      .attr("transform", `rotate(-90, -5, ${yTickPos + 2})`)
+      // .attr("stroke", "darkgray")
+      .text(tickValue);
+    
+    }
+    
+    // Add label
+    yAxisGroup.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", yAxisXPos + 10)
+      .attr("x", -(yAxisY1Pos + yAxisY2Pos) / 2)
+      .attr("dy", "-2em")
+      .style("text-anchor", "middle")
+      .style("opacity", 0.75)
+      .text("correlation strength");
+    
+      d3.select('#scales').style("opacity", 0.4);
+}
+
+function add_text_aid(){
+    const textData = [
+        // {text: "Hover over an experience", x: 910, y: 250, style: {"font-style": "italic"}, id: "experience_definition"},
+        {text: "Activity:",   x: 50,  y: 500, style: {"font-weight": "bolder"}},
+        {text: "Hover",       x: 125, y: 500, id: "activity_txt"},
+    
+        {text: "Experience:", x: 50, y: 550, style: {"font-weight": "bolder"}},
+        {text: "Hover",       x: 125, y: 550, id: "experience_txt"},
+    
+        {text: "Positively correlated:", x: START_POSITIVE_X, y: 500, style: {"font-weight": "bolder"}},
+        {text: "Select Experience",      x: START_POSITIVE_X, y: 515, id: "positive_experience"},
+        {text: "Negatively correlated:", x: START_NEGATIVE_X, y: 500, style: {"font-weight": "bolder"}},
+        {text: "Select Experience",      x: START_NEGATIVE_X, y: 515, id: "negative_experience"},
+    
+        {text: "Interpretation activities", x: 135, y: 460, style: {"font-style": "italic"}},
+        {text: "Construction activities",   x: 530, y: 460, style: {"font-style": "italic"}},
+        {text: "Social activities",         x: 920, y: 460, style: {"font-style": "italic"}}
+      ];
+      
+      
+      textData.forEach(({x, y, style, text, id}) => addText(x, y, style, text, id));
 }

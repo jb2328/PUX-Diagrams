@@ -29,13 +29,17 @@ text {
 flex: 0 0 auto;
 }
 #short_paragraph{
+    padding-top: 0.5em;
     font-size: 12px;
     text-align: justify;
 
 }
 #long_paragraph{
+    padding-top: 0.5em;
     font-size: 11px;
     text-align: justify;
-
+}
+#action_name{
+    font-weight: bold;
 }
 

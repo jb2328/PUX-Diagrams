@@ -19,11 +19,11 @@ const BACKWARD_LINK_COLOR = "red";
 const OPACITY_ON = 1;
 const OPACITY_OFF = 0.2;
 
-// x pos for negative and positive experiences
-const START_POSITIVE_X = 380;
-const START_NEGATIVE_X = 700;
-// Y pos for negative and positive experiences
-const START_Y = 511.5;
+const EXP_ID_TXT=270; // location of the experience id locs
+
+const START_POSITIVE_X = 380; // x pos for positive experiences
+const START_NEGATIVE_X = 700; // x pos for negative experiences
+const START_Y = 511.5; // Y pos for negative and positive experiences
 
 // Y pos for CIRCLE rows
 const Y_EXPERIENCES=400;
@@ -32,25 +32,21 @@ const Y_ACTIVITIES=250;
 // ------ICON PARAMETERS------//
 const CIRCLE_RADIUS=15;
 const CIRCLE_RADIUS_PX = CIRCLE_RADIUS+"px";
-// determines icons' size withing the bounding circle
-const ICON_MULTIPLIER=1.8;
-// icon transition growth time
-const TRANSITION_TIME = 300;  // milliseconds
-// how much larger should an icon get after how
-const SIZE_MULTIPLIER = 2;
+
+const ICON_MULTIPLIER=1.8; // how much larger should an icon get after hover
+const SIZE_MULTIPLIER=  2; // how much larger should a circle get after hover
+
+const TRANSITION_TIME = 300; // icon transition growth time 
 
 const ICON_HEIGHT=CIRCLE_RADIUS*ICON_MULTIPLIER;
 const ICON_WIDTH=CIRCLE_RADIUS*ICON_MULTIPLIER;
 
 const VIZ_MODE=0;
 
-// location of the experience id locs
-const EXP_ID_TXT=270;
 
 const yChild = Y_ACTIVITIES-9;
 const yParent = Y_EXPERIENCES+8;
 const strokeWidth = 1;
-
 
 const svg = d3
   .select("#svg-container")
@@ -58,11 +54,8 @@ const svg = d3
   .attr("width", width)
   .attr("height", height);
 
-  
-
 let experiences = "";
 let experiences_html = "";
-
 
 // Create a color map for your list
 let colorMap = {};
@@ -135,35 +128,8 @@ newData.forEach((d) => {
   });
 });
 
-// newData.forEach((d) => {
-//   d.link_positive.forEach((linkObj) => {
-//     const targetName = Object.keys(linkObj)[0];
-//     const strength = linkObj[targetName];
-//     childLinks.push({
-//       source_id: d.name,
-//       target_id: targetName,
-//       source: xScale(d.name),
-//       target: xScale(targetName),
-//       color: "gray",
-//       strength: strength,
-//     });
-//   });
-//   d.link_negative.forEach((linkObj) => {
-//     const targetName = Object.keys(linkObj)[0];
-//     const strength = linkObj[targetName];
-//     childLinks.push({
-//       source_id: d.name,
-//       target_id: targetName,
-//       source: xScale(d.name),
-//       target: xScale(targetName),
-//       color: "gray",
-//       strength: strength,
-//     });
-//   });
-// });
-
 // Draw arc-shaped links for EXPERIENCES
-const links = svg
+svg
   .append("g")
   .selectAll("path")
   .data(childLinks)
@@ -178,7 +144,7 @@ const links = svg
   .attr("stroke-opacity", OPACITY_OFF);
 
 // Draw nodes for activities (parents)
-const nodes = svg
+svg
   .append("g")
   .selectAll("text.activities")
   .data(activitiesWithChildren)
@@ -188,8 +154,12 @@ const nodes = svg
   .attr("class", "activity_circle")
   .attr("cx", (d) => yScale(d.name))
   .attr("cy", yParent)
-  .attr("r", CIRCLE_RADIUS_PX)
-  .attr("fill", (d) => colorMap[d.name.slice(0, 2)]);
+  .attr("r", CIRCLE_RADIUS/1.5 +"px")
+  .attr("fill", "white")
+  .attr("stroke", (d) => colorMap[d.name.slice(0, 2)])
+  .style("stroke-width",3);
+
+
 
   // Draw text labels for activities
 svg
@@ -201,15 +171,28 @@ svg
   .attr("class", "activities_txt")
   .style("pointer-events", "none")
   .attr("x", (d) => yScale(d.name))
-  .attr("y", Y_EXPERIENCES+10)
+  .attr("y", Y_EXPERIENCES+42)
   .attr("text-anchor", "middle")
+  .style("font-size", "8px") // Original font size
+  .style("fill", "darkgray") // Original color
   .text((d) => d.name)
   .attr("id", (d) => `activity-${d.name}`);
 
+  svg
+  .append("g")
+  .selectAll("text.activities")
+  .data(activitiesWithChildren)
+  .enter()
+  .append("text")
+  .attr("class", "activities_txt")
+  .style("pointer-events", "none")
+  .attr("x", (d) => yScale(d.name))
+  .attr("y", Y_EXPERIENCES+33)
+  .attr("text-anchor", "middle")
+  .text((d) => d.id)
+  .attr("id", (d) => `activity-${d.name}`);
 
-// ================================================= //
 // =========== ACTIVITY CIRCLES (BOTTOM) =========== //
-// ================================================= //
 
 d3.selectAll(".activity_circle")
   .on("mouseover", function (event, d) {
@@ -230,82 +213,10 @@ d3.selectAll(".activity_circle")
     clear_bullets();
 
   });
-
-
-// ============================================ //
 // =========== ACTIVITY CIRCLES END =========== //
-// ============================================ //
-
-/***************************************************/
 
 
-  // Append a group for each unique child
-  const groups = svg.selectAll(".child-group")
-    .data(uniqueChildren)
-    .enter()
-    .append("g")
-    .attr("transform", d => `translate(${xScale(d)}, ${Y_ACTIVITIES-2})`)
-    .on("mouseover", function(d) {exp_mouseover(this, d);})
-    .on("mouseout", function(d) {exp_mouseout(this, d);});
-
-
-
-
-  function exp_mouseout(that,d) {
-    console.log("exp_mouseout", that,d );
-
-    // d3.select(that).selectAll(".experience_circle")
-    // d3.select("#experiences_circle-"+d).selectAll(".experience_circle")
-
-    d3.select(that).selectAll(".experience_circle")
-      .transition()
-      .duration(TRANSITION_TIME)
-      .style("stroke", "none")
-      .attr("r", CIRCLE_RADIUS_PX);
-
-    d3.select(that).selectAll(".experience_icon")
-    // d3.select("#experiences_icon-"+d).selectAll(".experience_icon")
-      .transition()
-      .duration(TRANSITION_TIME)
-      .attr("width", ICON_WIDTH)
-      .attr("height", ICON_HEIGHT)
-      .attr("x", -ICON_WIDTH / 2)
-      .attr("y", -ICON_HEIGHT / 2);
-
-       // Remove 'aura' circle
-    d3.select(that).select(".aura_circle")
-    .transition()
-    .duration(TRANSITION_TIME)
-    .attr("r", 0)
-    .remove();
-    
-  }
-
-
-  // Append circles to groups
-  // groups.append("circle")
-  //   .attr("class", "experience_circle")
-  //   .attr("id", (d) => `experiences_circle-${d}`)
-  //   .attr("r", CIRCLE_RADIUS)
-  //   .style("fill", d => colorMap[d.slice(0, 2)]);
-  
-  // // Append icons to groups
-  // groups.append("image")
-  //   .attr("class", "experience_icon")
-  //   .attr("id", (d) => `experiences_icon-${d}`)
-  //   .attr("xlink:href", d => `./icons/vector/${d}.svg`)
-  //   .attr("x", -ICON_WIDTH / 2)
-  //   .attr("y", -ICON_HEIGHT / 2)
-  //   .attr("width", ICON_WIDTH)
-  //   .attr("height", ICON_HEIGHT);
-  
-
-// .attr("id", (d) => `exp-${d}`)
-  // .attr("id", (d) => `exp-${d}`)
-
-// ================================================ //
 // =========== EXPERIENCE CIRCLES (TOP) =========== //
-// ================================================ //
 
 // Draw circles for unique children.child-group
 svg
@@ -321,7 +232,7 @@ svg
   .attr("r", CIRCLE_RADIUS_PX)
   .style("fill", (d) => colorMap[d.slice(0, 2)]);
 
-  svg
+svg
   .append("g")
   .selectAll("image.children")
   .data(uniqueChildren)
@@ -336,7 +247,6 @@ svg
   .attr("y", 248 - ICON_HEIGHT / 2)
   .attr("width", ICON_WIDTH)
   .attr("height", ICON_HEIGHT);
-
 
 // Draw text labels for unique children
 svg
@@ -356,17 +266,13 @@ svg
   .text((d) => d)
   .attr("id", (d) => `experience-${d}`);
 
-  // Create or select a top layer group
-  //required so that icons do not overlap on z index
-let topLayer = d3.select("#topLayer");
-if (topLayer.empty()) {
-  topLayer = d3.select("svg").append("g").attr("id", "topLayer");
-}
+  let topLayer = d3.select("#topLayer");  // Create or select a top layer group
+  if (topLayer.empty()) {
+    topLayer = d3.select("svg").append("g").attr("id", "topLayer");
+  }  //required so that icons do not overlap on z index
 
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
-
-    // exp_mouseover(this, d);
 
     clear_bullets();
 
@@ -387,8 +293,6 @@ d3.selectAll(".experience_circle")
 
   .on("mouseout", function (event, d) {
 
-    // exp_mouseout(this, d);
-
     clear_bullets();
 
     clear_html_text();
@@ -397,63 +301,11 @@ d3.selectAll(".experience_circle")
 
     clean_activities_paths(); //targets activity paths only (optional)
 
-
-    let circle_id='#experiences_circle-'+d;
-    let icon_id='#experiences_icon-'+d;
-
-    d3.select(circle_id)
-      .transition()
-      .duration(TRANSITION_TIME)
-      .style("stroke", "none")
-      .attr("r", CIRCLE_RADIUS_PX);
-
-    d3.select(icon_id)
-      .transition()
-      .duration(TRANSITION_TIME)
-      .attr("width", ICON_WIDTH)
-      .attr("height", ICON_HEIGHT)
-      .attr("x", d3.select(circle_id).attr("cx")-ICON_WIDTH/2)
-      .attr("y", d3.select(circle_id).attr("cy")-ICON_HEIGHT/2);
-
-    //    // Remove 'aura' circle
-    // d3.select(this).select(".aura_circle")
-    //   .transition()
-    //   .duration(TRANSITION_TIME)
-    //   .attr("r", 0)
-    //   .remove();
-      
-
+    icon_dezoom(d);
   });
 
-// ============================================== //
 // =========== EXPERIENCE CIRCLES END =========== //
-// ============================================== //
 
+add_strength_scale();
 
-  const textData = [
-    // {text: "Hover over an experience", x: 910, y: 250, style: {"font-style": "italic"}, id: "experience_definition"},
-    {text: "Activity:", x: 50, y: 500, style: {"font-weight": "bolder"}},
-    {text: "Hover", x: 125, y: 500, id: "activity_txt"},
-
-    {text: "Experience:", x: 50, y: 550, style: {"font-weight": "bolder"}},
-    {text: "Hover", x: 125, y: 550, id: "experience_txt"},
-
-    {text: "Positively corelated:", x: START_POSITIVE_X, y: 500, style: {"font-weight": "bolder"}},
-    {text: "Select Experience", x: START_POSITIVE_X, y: 515, id: "positive_experience"},
-    {text: "Negatively corelated:", x: START_NEGATIVE_X, y: 500, style: {"font-weight": "bolder"}},
-    {text: "Select Experience", x: START_NEGATIVE_X, y: 515, id: "negative_experience"},
-
-    {text: "Interpretation activities", x: 135, y: 440, style: {"font-style": "italic"}},
-    {text: "Construction activities", x: 530, y: 440, style: {"font-style": "italic"}},
-    {text: "Social activities", x: 920, y: 440, style: {"font-style": "italic"}}
-  ];
-  
-  
-  textData.forEach(({x, y, style, text, id}) => addText(x, y, style, text, id));
-
-
-  // Code ...
-  //console.log("MOUSEOVER");
-                // console.log("d",d);
-                // console.log("this",this); 
-                // console.log("d3 this",d3.select(this)); 
+add_text_aid();
