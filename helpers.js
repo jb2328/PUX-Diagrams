@@ -388,14 +388,12 @@ function experience_sentiments_bullets(d){
 
 function clean_experience_paths(){
     d3.selectAll(".experiences_path")
+    .interrupt()
+    .transition()
+    .duration(250)
     .style("stroke", STROKE_COLOR_OFF)
     .style("opacity", OPACITY_OFF)
     .style("stroke-width", STROKE_WIDTH_OFF);
-
-    d3.selectAll(".experiences_path")
-      .style("stroke", STROKE_COLOR_OFF)
-      .style("stroke-width", STROKE_WIDTH_OFF)
-      .style("stroke-opacity", OPACITY_OFF);
 
     d3.selectAll(".experience_circle")
       .style("stroke-opacity", OPACITY_ON)
@@ -408,5 +406,33 @@ function clean_activities_paths(){
     .style("stroke", STROKE_COLOR_OFF)
     .style("stroke-width", STROKE_WIDTH_OFF)
     .style("stroke-opacity", OPACITY_OFF);
+}
 
+
+function icon_zoom(d){
+    let circle_id = '#experiences_circle-' + d;
+    let icon_id = '#experiences_icon-' + d;
+
+    d3.select(circle_id)
+      .transition()
+      .duration(TRANSITION_TIME)
+      .style("stroke", "white")
+      .style("stroke-width", "2")
+      .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER + "px");
+
+    d3.select(icon_id)
+      .transition()
+      .duration(TRANSITION_TIME)
+      .attr("width", ICON_WIDTH * SIZE_MULTIPLIER)
+      .attr("height", ICON_HEIGHT * SIZE_MULTIPLIER)
+      .attr("x", d3.select(circle_id).attr("cx") - ICON_WIDTH)
+      .attr("y", d3.select(circle_id).attr("cy") - ICON_HEIGHT);
+
+    // Move circle to top layer
+    let circleNode = d3.select(circle_id).node();
+    topLayer.node().appendChild(circleNode);
+
+    // Move icon to top layer
+    let iconNode = d3.select(icon_id).node();
+    topLayer.node().appendChild(iconNode);
 }

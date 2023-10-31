@@ -248,52 +248,7 @@ d3.selectAll(".activity_circle")
     .on("mouseover", function(d) {exp_mouseover(this, d);})
     .on("mouseout", function(d) {exp_mouseout(this, d);});
 
-    
-  
-  function exp_mouseover(that,d){
-    console.log("exp_mouseover", that, d);
-    console.log("exp_mouseover", "experiences_circle-"+d);
-    console.log("meta",CIRCLE_RADIUS * SIZE_MULTIPLIER);
-    
-    // d3.select("#experiences_circle-"+d)
-    d3.select(that).selectAll(".experience_circle")
 
-    .transition()
-    .duration(TRANSITION_TIME)
-    .style("stroke", "gray")
-    .style("stroke-width", "1.75")
-    .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER+"px");
-
-  // d3.select("#experiences_icon-"+d).selectAll(".experience_icon")
-  d3.select(that).selectAll(".experience_icon")
-
-    .transition()
-    .duration(TRANSITION_TIME)
-    .attr("width", ICON_WIDTH * SIZE_MULTIPLIER)
-    .attr("height", ICON_HEIGHT * SIZE_MULTIPLIER)
-    .attr("x", -ICON_WIDTH * SIZE_MULTIPLIER / 2)
-    .attr("y", -ICON_HEIGHT * SIZE_MULTIPLIER / 2);
-
-  // Bring to front
-  that.parentElement.appendChild(that);
-
-  // Append 'aura' circle
-    // Prepend 'aura' circle
-    const auraCircle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-    auraCircle.setAttribute("class", "aura_circle");
-    auraCircle.setAttribute("r", 0);
-    auraCircle.style.fill = "white";
-    auraCircle.style.opacity = 0.5;
-
-
-    that.insertBefore(auraCircle, that.firstChild);
-
-  // Animate 'aura' circle
-  d3.select(auraCircle)
-    .transition()
-    .duration(TRANSITION_TIME)
-    .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER * 1.25);
-  }
 
 
   function exp_mouseout(that,d) {
@@ -401,6 +356,13 @@ svg
   .text((d) => d)
   .attr("id", (d) => `experience-${d}`);
 
+  // Create or select a top layer group
+  //required so that icons do not overlap on z index
+let topLayer = d3.select("#topLayer");
+if (topLayer.empty()) {
+  topLayer = d3.select("svg").append("g").attr("id", "topLayer");
+}
+
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
 
@@ -409,20 +371,20 @@ d3.selectAll(".experience_circle")
     clear_bullets();
 
     set_html_text(d, 'experience');
-
-    //bottom left bullets
-    combined_bullets(d, find_experience_parents(d));
+   
+    combined_bullets(d, find_experience_parents(d));  //bottom left bullets
+   
+    clean_experience_paths(); //set all experience paths gray
 
     //highlight relevant icons
     d3.selectAll(".experience_circle").style("opacity", OPACITY_OFF);
     d3.select(this).style("opacity", OPACITY_ON);
 
-    //set all experience paths gray
-    clean_experience_paths();
-
-    // bullets for positive and negative experience correlations
-    experience_sentiments_bullets(d);
+    experience_sentiments_bullets(d); // bullets for positive and negative experience correlations
+  
+    icon_zoom(d);
   })
+
   .on("mouseout", function (event, d) {
 
     // exp_mouseout(this, d);
@@ -430,12 +392,36 @@ d3.selectAll(".experience_circle")
     clear_bullets();
 
     clear_html_text();
-  
-    //targets experience paths and circles
-    clean_experience_paths();
+   
+    clean_experience_paths();  //targets experience paths and circles
 
-    //targets activity paths only (optional)
-    clean_activities_paths();
+    clean_activities_paths(); //targets activity paths only (optional)
+
+
+    let circle_id='#experiences_circle-'+d;
+    let icon_id='#experiences_icon-'+d;
+
+    d3.select(circle_id)
+      .transition()
+      .duration(TRANSITION_TIME)
+      .style("stroke", "none")
+      .attr("r", CIRCLE_RADIUS_PX);
+
+    d3.select(icon_id)
+      .transition()
+      .duration(TRANSITION_TIME)
+      .attr("width", ICON_WIDTH)
+      .attr("height", ICON_HEIGHT)
+      .attr("x", d3.select(circle_id).attr("cx")-ICON_WIDTH/2)
+      .attr("y", d3.select(circle_id).attr("cy")-ICON_HEIGHT/2);
+
+    //    // Remove 'aura' circle
+    // d3.select(this).select(".aura_circle")
+    //   .transition()
+    //   .duration(TRANSITION_TIME)
+    //   .attr("r", 0)
+    //   .remove();
+      
 
   });
 
