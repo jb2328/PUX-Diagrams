@@ -1,4 +1,4 @@
-const newData=[
+const exp_list=[
     {
         'id': 'You can see relationships between parts',
         'name': 'SE1',
@@ -219,8 +219,7 @@ const newData=[
 ];
 
 // Your data
-const inputData = 
-  // ... (your data here)
+const activities = 
   [
   {
     "id": "Search",

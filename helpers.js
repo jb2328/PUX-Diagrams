@@ -6,8 +6,8 @@ function interpolate(a, b, t) {
   
 function findNameByImport(importValue) {
     let list_of_matches = [];
-    // Loop through the inputData array
-    for (const item of inputData) {
+    // Loop through the activities array
+    for (const item of activities) {
       // Check if the importValue exists in the "imports" property of the current object
       if (item.imports.includes(importValue)) {
         // If found, return the "name" property of the current object
@@ -174,12 +174,12 @@ function getPathString(d) {
     const source = d.name;
     const targets = d.imports;
 
-    let experiences = "";
+    let exp_bullet_list = "";
 
     // draw paths from ACTIVITY to EXPERIENCE
     targets.forEach((target) => {
-      const foundObject = newData.find((item) => item.name === target);
-      experiences += `(${target}) ${foundObject.id}\n`;
+      const foundObject = exp_list.find((item) => item.name === target);
+      exp_bullet_list += `(${target}) ${foundObject.id}\n`;
       d3.select(`#${source}-${target}`)
         .style("stroke", colorMap[source.slice(0, 2)])
         .style("stroke-width", STROKE_WIDTH_ON)
@@ -187,7 +187,7 @@ function getPathString(d) {
         .style("stroke-opacity", OPACITY_ON);
     });
 
-    const split_text = experiences.split("\n");
+    const split_text = exp_bullet_list.split("\n");
     split_text.pop(); // Remove the last empty string
 
     // draw EXPERIENCE temp-circles for the list
@@ -217,7 +217,7 @@ function getPathString(d) {
 
 //both activites and experiences (bottom left)
 function combined_bullets(d,parent_list){
-    const foundObject = newData.find((item) => item.name === d);
+    const foundObject = exp_list.find((item) => item.name === d);
     const newExperience = `(${d})  ${foundObject.id} \n`;
     const split_experiences = newExperience.split("\n");
 
@@ -287,7 +287,7 @@ function find_experience_parents(d){
 
     // console.log("PARENT LIST", parents_all,"FROM",d)
     parents_all.forEach((entry) => {
-      const found_parent = inputData.find((item) => item.name === entry);
+      const found_parent = activities.find((item) => item.name === entry);
     //   console.log("FOUND PARENT", found_parent)
       parent_text += `(${entry})  ${found_parent.id} \n`;
       d3.select(`#${entry}-${d}`)
@@ -299,7 +299,12 @@ function find_experience_parents(d){
     return parent_text
 }
 
-
+//needs to be rewritten from scratch
+//it should only get data from  experience_links and exp_list variables
+//link positive should only show link_positive elements from exp_list
+//link negative should only show link_negative elements from exp_list
+//this will give a source and target (available from experience_links)
+//that will then be highlighted
 function experience_sentiments_bullets(d){
 
     // Initialize two arrays to store IDs
@@ -340,8 +345,8 @@ function experience_sentiments_bullets(d){
         .attr("stroke-dashoffset", 0);
 
       let foundObject =
-        newData.find((item) => item.name === target_circle) ||
-        inputData.find((item) => item.name === target_circle);
+        exp_list.find((item) => item.name === target_circle) ||
+        activities.find((item) => item.name === target_circle);
 
       if (!foundObject)
         console.error(`id: ${id}, target: ${target_circle} not found`);
@@ -356,8 +361,8 @@ function experience_sentiments_bullets(d){
       const pathLength = element.node().getTotalLength();
 
       let foundObject =
-        newData.find((item) => item.name === target_circle) ||
-        inputData.find((item) => item.name === target_circle);
+        exp_list.find((item) => item.name === target_circle) ||
+        activities.find((item) => item.name === target_circle);
 
       if (!foundObject)
         console.error(`id: ${id}, target: ${target_circle} not found`);
@@ -572,7 +577,7 @@ function add_text_aid(){
 }
 
 function load_animation(){
-    let delay = 250;
+    let delay = 200;
 const delayIncrement = 50;  // milliseconds
 
 d3.selectAll(".experience_circle").each(function (d, i) {
@@ -581,7 +586,6 @@ d3.selectAll(".experience_circle").each(function (d, i) {
   const cy_incr=20;
 
   let cy=parseInt(d3.select(circle_id).attr("cy"));
-  console.log("cy",cy)
 
   const SIZE_MULTIPLIER=1.25;
   d3.select(this)
@@ -594,7 +598,6 @@ d3.selectAll(".experience_circle").each(function (d, i) {
     .duration(TRANSITION_TIME/2)
     .attr("cy",cy)
     .attr("r", CIRCLE_RADIUS_PX);
-
 
   d3.select(icon_id)
     .transition()
@@ -647,6 +650,7 @@ function show_tooltip(d){
     const leftPosition = (x + tooltipWidth > svgWidth) ? (x - tooltipWidth) : x;
     let topPosition = (y + tooltipHeight + 10 > svgHeight) ? (y - tooltipHeight) : (y + 10);
     topPosition=+338;
+
     // Update tooltip position
     tooltip
       .style("left", `${leftPosition}px`)

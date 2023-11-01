@@ -1,6 +1,8 @@
 // Create a set of unique children and a map of activities with children
-const uniqueChildren = Array.from(new Set(inputData.flatMap((d) => d.imports)));
-const activitiesWithChildren = inputData;
+// const uniqueChildren = Array.from(new Set(activities.flatMap((d) => d.imports)));
+const uniqueChildren = exp_list.map(item => item.name);
+
+const activitiesWithChildren = activities;
 
 // Set dimensions
 const width = 1150;
@@ -54,7 +56,6 @@ const svg = d3
   .attr("width", width)
   .attr("height", height);
 
-let experiences = "";
 let experiences_html = "";
 
 // Create a color map for your list
@@ -81,8 +82,10 @@ const yScale = d3
 const line = d3.line().curve(d3.curveBasis);
 const controlPointFactor = 0.9; // Adjust this factor to control the sharpness
 
-// Draw lines connecting parents and children
-inputData.forEach((activity) => {
+
+
+// Draw lines connecting ACTIVITIES and EXPERIENCES
+activities.forEach((activity) => {
   activity.imports.forEach((child) => {
     const points = [
       [yScale(activity.name), Y_EXPERIENCES],
@@ -106,23 +109,28 @@ inputData.forEach((activity) => {
 });
 
 
-const childLinks = [];
+const experience_links = [];
 
-newData.forEach((d) => {
+// generate links between experiences
+//can be expand to make use of linkType variable
+exp_list.forEach((d) => {
   ['link_positive', 'link_negative'].forEach((linkType) => {
     d[linkType].forEach((linkObj) => {
+
       const targetName = Object.keys(linkObj)[0];
       const strength = linkObj[targetName];
       const pos_y = calculatePosY(d, width, height);
-      childLinks.push({
+
+      experience_links.push({
         source_id: d.name,
         target_id: targetName,
-        source: xScale(d.name),
-        target: xScale(targetName),
-        color: "gray",
+        source: Math.round(xScale(d.name),1),
+        target: Math.round(xScale(targetName),1),
+        color: "darkgray",
         strength: strength,
         viz_mode: VIZ_MODE,
         yNewCoord: pos_y
+
       });
     });
   });
@@ -132,7 +140,7 @@ newData.forEach((d) => {
 svg
   .append("g")
   .selectAll("path")
-  .data(childLinks)
+  .data(experience_links)
   .enter()
   .append("path")
   .attr("class", "experiences_path")
@@ -316,4 +324,4 @@ add_strength_scale();
 
 add_text_aid();
 
-// load_animation();
+load_animation();
