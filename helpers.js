@@ -251,10 +251,6 @@ function set_html_text(d, mode='experience'){
 
     document.getElementById("action_name").innerHTML=PUX_COMPLETE[d].name;
     document.getElementById("action_name").style.color = colorMap[d.slice(0, 2)];
-
-
-
-
 }
 
 function clear_html_text(){
@@ -526,7 +522,7 @@ function add_strength_scale(){
 }
 
 function add_text_aid(){
-    const textData = [
+    const text_data = [
         // {text: "Hover over an experience", x: 910, y: 250, style: {"font-style": "italic"}, id: "experience_definition"},
         {text: "Activity:",   x: 50,  y: 500, style: {"font-weight": "bolder"}},
         {text: "Hover",       x: 125, y: 500, id: "activity_txt"},
@@ -538,12 +534,125 @@ function add_text_aid(){
         {text: "Select Experience",      x: START_POSITIVE_X, y: 515, id: "positive_experience"},
         {text: "Negatively correlated:", x: START_NEGATIVE_X, y: 500, style: {"font-weight": "bolder"}},
         {text: "Select Experience",      x: START_NEGATIVE_X, y: 515, id: "negative_experience"},
-    
-        {text: "Interpretation activities", x: 135, y: 460, style: {"font-style": "italic"}},
-        {text: "Construction activities",   x: 530, y: 460, style: {"font-style": "italic"}},
-        {text: "Social activities",         x: 920, y: 460, style: {"font-style": "italic"}}
       ];
       
+      text_data.forEach(({x, y, style, text, id}) => addText(x, y, style, text, id));
+
+      const activity_data=[
+        {text: "Interpretation activities", x: 135, y: 460, style: {"font-style": "italic"}, underlineColor: colorMap["IA"], identifier_start: "IA1", identifier_end: "IA3"},
+        {text: "Construction activities",   x: 530, y: 460, style: {"font-style": "italic"}, underlineColor: colorMap["CA"],identifier_start: "CA1", identifier_end: "CA4"},
+        {text: "Social activities",         x: 920, y: 460, style: {"font-style": "italic"}, underlineColor: colorMap["SA"],identifier_start: "SA1", identifier_end: "SA3"}
+    ];
       
-      textData.forEach(({x, y, style, text, id}) => addText(x, y, style, text, id));
+
+      function underlined_text(x, y, style, text, id, underlineColor, identifier_start, identifier_end) {
+        // Existing code for appending text
+        svg.append("text")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("style", style)
+          .text(text);
+      
+        let x_start = parseFloat(d3.select("#activity_circle-" + identifier_start).attr("cx"));
+        let x_end = parseFloat(d3.select("#activity_circle-" + identifier_end).attr("cx"));
+      
+        svg.append("line")
+          .attr("x1", x_start)
+          .attr("y1", y + 5)
+          .attr("x2", x_end)
+          .attr("y2", y + 5)
+          .attr("stroke", underlineColor);
+      }
+      
+      activity_data.forEach(({x, y, style, text, id, underlineColor, identifier_start, identifier_end}) => 
+      underlined_text(x, y, style, text, id, underlineColor, identifier_start, identifier_end)
+    );
+    
+      
 }
+
+function load_animation(){
+    let delay = 250;
+const delayIncrement = 50;  // milliseconds
+
+d3.selectAll(".experience_circle").each(function (d, i) {
+  const circle_id = '#experiences_circle-' + d;
+  const icon_id = '#experiences_icon-' + d;
+  const cy_incr=20;
+
+  let cy=parseInt(d3.select(circle_id).attr("cy"));
+  console.log("cy",cy)
+
+  const SIZE_MULTIPLIER=1.25;
+  d3.select(this)
+    .transition()
+    .delay(delay)
+    .duration(TRANSITION_TIME/2)
+    .attr("r", CIRCLE_RADIUS * SIZE_MULTIPLIER + "px")
+    .attr("cy",cy-cy_incr)
+    .transition()
+    .duration(TRANSITION_TIME/2)
+    .attr("cy",cy)
+    .attr("r", CIRCLE_RADIUS_PX);
+
+
+  d3.select(icon_id)
+    .transition()
+    .delay(delay)
+    .duration(TRANSITION_TIME/2)
+    .attr("width", ICON_WIDTH * SIZE_MULTIPLIER*0.9)
+    .attr("height", ICON_HEIGHT * SIZE_MULTIPLIER*0.9)
+    .attr("x", d3.select(circle_id).attr("cx") - (ICON_WIDTH* SIZE_MULTIPLIER*0.9)/2)
+    .attr("y", d3.select(circle_id).attr("cy") - (ICON_HEIGHT* SIZE_MULTIPLIER*0.9)/2 -cy_incr)
+    .transition()
+    .duration(TRANSITION_TIME/2)
+    .attr("width", ICON_WIDTH)
+    .attr("height", ICON_HEIGHT)
+    .attr("x", d3.select(circle_id).attr("cx") - ICON_WIDTH / 2)
+    .attr("y", d3.select(circle_id).attr("cy") - ICON_HEIGHT / 2);
+
+  delay += delayIncrement;
+});
+
+}
+
+
+function show_tooltip(d){
+
+    // Create tooltip
+    const tooltip = d3.select("body").append("div")
+      .attr("id", "tooltip")
+      .style("position", "absolute")
+      .style("background-color", "white")
+      // .style("border", "1px solid black")
+      .style("padding", "5px")
+      .style("opacity", 0.6);
+    
+      const svgWidth = width;
+      const svgHeight=height;
+    
+    
+      // Set tooltip content initially to measure size
+      tooltip.html(pux_list_definitions[d.slice(0, 2)] + " " + PUX_COMPLETE[d].id[2] + ":<br>" + PUX_COMPLETE[d].name);
+    
+      // Dynamically calculate tooltip dimensions
+      const tooltipDimensions = tooltip.node().getBoundingClientRect();
+      const tooltipWidth = tooltipDimensions.width;
+      const tooltipHeight = tooltipDimensions.height;
+      
+      // Mouse position
+      const [x, y] = d3.pointer(event);
+    
+    // Calculate left and top position
+    const leftPosition = (x + tooltipWidth > svgWidth) ? (x - tooltipWidth) : x;
+    let topPosition = (y + tooltipHeight + 10 > svgHeight) ? (y - tooltipHeight) : (y + 10);
+    topPosition=+338;
+    // Update tooltip position
+    tooltip
+      .style("left", `${leftPosition}px`)
+      .style("top", `${topPosition}px`);
+    
+    
+    }
+    
+    

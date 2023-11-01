@@ -289,6 +289,9 @@ d3.selectAll(".experience_circle")
     experience_sentiments_bullets(d); // bullets for positive and negative experience correlations
   
     icon_zoom(d);
+
+    show_tooltip(d);
+
   })
 
   .on("mouseout", function (event, d) {
@@ -302,6 +305,9 @@ d3.selectAll(".experience_circle")
     clean_activities_paths(); //targets activity paths only (optional)
 
     icon_dezoom(d);
+
+    d3.select("#tooltip").remove();
+
   });
 
 // =========== EXPERIENCE CIRCLES END =========== //
@@ -309,3 +315,5 @@ d3.selectAll(".experience_circle")
 add_strength_scale();
 
 add_text_aid();
+
+// load_animation();
