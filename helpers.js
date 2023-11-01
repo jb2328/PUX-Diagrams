@@ -126,7 +126,7 @@ function getPathString(d) {
       .attr("dy", (d, i) => (i === 0 ? 0 : 15))
       .text((d) => d);
 
-    for (let i = 0; i < data.length - 1; i++) {
+    for (let i = 0; i <= data.length - 1; i++) {
       const cy = startY + i * 15;
       const fill = colorMap[data[i].slice(2, 4)];
 
@@ -299,100 +299,215 @@ function find_experience_parents(d){
     return parent_text
 }
 
-//needs to be rewritten from scratch
-//it should only get data from  experience_links and exp_list variables
-//link positive should only show link_positive elements from exp_list
-//link negative should only show link_negative elements from exp_list
-//this will give a source and target (available from experience_links)
-//that will then be highlighted
 function experience_sentiments_bullets(d){
-
-    // Initialize two arrays to store IDs
-    const firstHalfIDs = [];
-    const secondHalfIDs = [];
-
-    // Select all elements with the class "experiences_path"
-    d3.selectAll(".experiences_path").each(function () {
-      const idParts = this.id.split("-");
-      if (idParts[0].includes(d)) {
-        firstHalfIDs.push(this.id);
-      } else if (idParts[1].includes(d)) {
-        secondHalfIDs.push(this.id);
-      }
-    });
-
+    console.log(d)
     let positive_experience = "";
     let negative_experience = "";
+    let split_positive=[];
+    let split_negative=[];
+    
+    //first degree is extracted from the original paragraph for the experience
+    const first_degree = experience_links.filter(obj => obj.source_id === d); 
+    //second degree is where the experience is referenced in other paragraphs
+    const second_degree = experience_links.filter(obj => obj.target_id === d); 
 
-    // Loop through and target elements with specificString in the first half
-    firstHalfIDs.forEach((id) => {
-      const target_circle = id.split("-")[1];
-      const element = d3.select("#" + id);
-      const pathLength = element.node().getTotalLength();
+    console.log(first_degree);
+    console.log(second_degree);
 
-      d3.select("#experiences_circle-" + target_circle)
+
+    first_degree.forEach((element) => {
+
+        let state=parseFloat(element.strength)>0?"positive":"negative";
+        let path_id=element.source_id+"-"+element.target_id;
+        let entry=` (${element.target_id}) ${PUX_COMPLETE[element.target_id].name} `;
+        
+
+        // console.log(path_id, state,element.strength);
+        // console.log(PUX_COMPLETE[element.source_id])
+        // console.log(entry);
+
+        if(state=="positive"){
+            split_positive.push(entry)
+            animate_path(path_id, FORWARD_LINK_COLOR);
+        }
+        else{
+            split_negative.push(entry)
+            animate_path(path_id, BACKWARD_LINK_COLOR);
+        }
+
+        // highlight relevant experiences
+        d3.select("#experiences_circle-" + element.target_id)
         .style("opacity",OPACITY_ON);
 
-      element
-        .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
-        .attr("stroke-dashoffset", pathLength)
-        .style("stroke", FORWARD_LINK_COLOR)
-        .style("stroke-width", STROKE_WIDTH_ON)
-        .style("opacity", OPACITY_ON)
-        .transition()
-        .duration(1500)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
+    })
 
-      let foundObject =
-        exp_list.find((item) => item.name === target_circle) ||
-        activities.find((item) => item.name === target_circle);
+    // second_degree.forEach((element) => {
 
-      if (!foundObject)
-        console.error(`id: ${id}, target: ${target_circle} not found`);
+    //     let state=parseFloat(element.strength)>0?"positive":"negative";
+    //     let path_id=element.source_id+"-"+element.target_id;
+    //     let entry=` (${element.source_id}) ${PUX_COMPLETE[element.source_id].name} `;
+        
 
-      positive_experience += ` (${target_circle})   ${foundObject.id} \n`;
-    });
+    //     console.log(path_id, state,element.strength);
+    //     console.log(PUX_COMPLETE[element.source_id])
+    //     console.log(entry);
 
-    // Loop through and target elements with specificString in the second half
-    secondHalfIDs.forEach((id) => {
-      const target_circle = id.split("-")[0];
-      const element = d3.select("#" + id);
-      const pathLength = element.node().getTotalLength();
+    //     if(state=="positive"){
+    //         split_positive.push(entry)
+    //         animate_dashed_path(path_id, FORWARD_LINK_COLOR);
+    //     }
+    //     else{
+    //         split_negative.push(entry)
+    //         animate_dashed_path(path_id, BACKWARD_LINK_COLOR);
+    //     }
 
-      let foundObject =
-        exp_list.find((item) => item.name === target_circle) ||
-        activities.find((item) => item.name === target_circle);
+    //     // highlight relevant experiences
+    //     d3.select("#experiences_circle-" + element.target_id)
+    //     .style("opacity",OPACITY_ON);
 
-      if (!foundObject)
-        console.error(`id: ${id}, target: ${target_circle} not found`);
-
-      negative_experience += ` (${target_circle}) \t ${foundObject.id} \n`;
-
-      d3.select("#experiences_circle-" + target_circle)
-        .style("opacity",OPACITY_ON);
-
-      element
-        .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
-        .attr("stroke-dashoffset", pathLength)
-        .style("stroke", BACKWARD_LINK_COLOR)
-        .style("stroke-width", STROKE_WIDTH_ON)
-        .style("opacity", OPACITY_ON)
-        .transition()
-        .duration(1500)
-        .ease(d3.easeLinear)
-        .attr("stroke-dashoffset", 0);
-    });
+    // })
 
 
-    let split_positive = positive_experience.split("\n");
-    let split_negative = negative_experience.split("\n");
+
 
     d3.select("#negative_experience").text("");
     d3.select("#positive_experience").text("");
 
     updateTextAndCircles("negative_experience",split_negative,START_NEGATIVE_X,START_Y);
     updateTextAndCircles("positive_experience",split_positive,START_POSITIVE_X, START_Y);
+
+
+}
+
+function animate_path(path_id, stroke_color){
+    const path = d3.select("#" + path_id);
+    const pathLength = path.node().getTotalLength();
+
+      path
+        .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
+        .attr("stroke-dashoffset", pathLength)
+        .style("stroke", stroke_color)
+        .style("stroke-width", STROKE_WIDTH_ON)
+        .style("opacity", OPACITY_ON)
+        .transition()
+        .duration(1500)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+}
+
+function animate_dashed_path(path_id, stroke_color){
+    const path = d3.select("#" + path_id);
+    const pathLength = path.node().getTotalLength();
+
+    path
+        // .attr("stroke-dasharray", `${pathLength / 50} ${pathLength / 50}`)
+        // .attr("stroke-dashoffset", pathLength)
+        .style("stroke", stroke_color)
+        .style("stroke-width", STROKE_WIDTH_ON)
+        .style("opacity", OPACITY_OFF)
+        .transition()
+        .duration(2500)
+        .ease(d3.easeLinear)
+        .style("opacity", OPACITY_ON)
+        .attr("stroke-dashoffset", 0);
+}
+
+//needs to be rewritten from scratch
+//it should only get data from  experience_links and exp_list variables
+//link positive should only show link_positive elements from exp_list
+//link negative should only show link_negative elements from exp_list
+//this will give a source and target (available from experience_links)
+//that will then be highlighted
+function experience_sentiments_bullets_old(d){
+    
+    // // Initialize two arrays to store IDs
+    // const firstHalfIDs = [];
+    // const secondHalfIDs = [];
+
+    // // Select all elements with the class "experiences_path"
+    // d3.selectAll(".experiences_path").each(function () {
+    //   const idParts = this.id.split("-");
+    //   if (idParts[0].includes(d)) {
+    //     firstHalfIDs.push(this.id);
+    //   } else if (idParts[1].includes(d)) {
+    //     secondHalfIDs.push(this.id);
+    //   }
+    // });
+
+    // let positive_experience = "";
+    // let negative_experience = "";
+
+    // // Loop through and target elements with specificString in the first half
+    // firstHalfIDs.forEach((id) => {
+    //   const target_circle = id.split("-")[1];
+    //   const element = d3.select("#" + id);
+    //   const pathLength = element.node().getTotalLength();
+
+    //   d3.select("#experiences_circle-" + target_circle)
+    //     .style("opacity",OPACITY_ON);
+
+    //   element
+    //     .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
+    //     .attr("stroke-dashoffset", pathLength)
+    //     .style("stroke", FORWARD_LINK_COLOR)
+    //     .style("stroke-width", STROKE_WIDTH_ON)
+    //     .style("opacity", OPACITY_ON)
+    //     .transition()
+    //     .duration(1500)
+    //     .ease(d3.easeLinear)
+    //     .attr("stroke-dashoffset", 0);
+
+    //   let foundObject =
+    //     exp_list.find((item) => item.name === target_circle) ||
+    //     activities.find((item) => item.name === target_circle);
+
+    //   if (!foundObject)
+    //     console.error(`id: ${id}, target: ${target_circle} not found`);
+
+    //   positive_experience += ` (${target_circle})   ${foundObject.id} \n`;
+    // });
+
+    // // Loop through and target elements with specificString in the second half
+    // secondHalfIDs.forEach((id) => {
+    //   const target_circle = id.split("-")[0];
+    //   const element = d3.select("#" + id);
+    //   const pathLength = element.node().getTotalLength();
+
+    //   let foundObject =
+    //     exp_list.find((item) => item.name === target_circle) ||
+    //     activities.find((item) => item.name === target_circle);
+
+    //   if (!foundObject)
+    //     console.error(`id: ${id}, target: ${target_circle} not found`);
+
+    //   negative_experience += ` (${target_circle}) \t ${foundObject.id} \n`;
+
+    //   d3.select("#experiences_circle-" + target_circle)
+    //     .style("opacity",OPACITY_ON);
+
+    //   element
+    //     .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
+    //     .attr("stroke-dashoffset", pathLength)
+    //     .style("stroke", BACKWARD_LINK_COLOR)
+    //     .style("stroke-width", STROKE_WIDTH_ON)
+    //     .style("opacity", OPACITY_ON)
+    //     .transition()
+    //     .duration(1500)
+    //     .ease(d3.easeLinear)
+    //     .attr("stroke-dashoffset", 0);
+    // });
+
+
+    // let split_positive = positive_experience.split("\n");
+    // let split_negative = negative_experience.split("\n");
+
+    // console.log(split_positive,split_negative);
+
+    // d3.select("#negative_experience").text("");
+    // d3.select("#positive_experience").text("");
+
+    // updateTextAndCircles("negative_experience",split_negative,START_NEGATIVE_X,START_Y);
+    // updateTextAndCircles("positive_experience",split_positive,START_POSITIVE_X, START_Y);
 }
 
 function clean_experience_paths(){
@@ -577,8 +692,8 @@ function add_text_aid(){
 }
 
 function load_animation(){
-    let delay = 200;
-const delayIncrement = 50;  // milliseconds
+    let delay = 100;
+const delayIncrement = 25;  // milliseconds
 
 d3.selectAll(".experience_circle").each(function (d, i) {
   const circle_id = '#experiences_circle-' + d;
@@ -636,8 +751,10 @@ function show_tooltip(d){
     
     
       // Set tooltip content initially to measure size
-      tooltip.html(pux_list_definitions[d.slice(0, 2)] + " " + PUX_COMPLETE[d].id[2] + ":<br>" + PUX_COMPLETE[d].name);
-    
+      tooltip.html(PUX_COMPLETE[d].name+ "<br> <div id='pux_span'>"+pux_list_definitions[d.slice(0, 2)] + " " + PUX_COMPLETE[d].id[2]+"</div>");
+      document.getElementById("pux_span").style.color = colorMap[d.slice(0, 2)]; //sets color
+      document.getElementById("pux_span").style.fontSize = "12px";
+
       // Dynamically calculate tooltip dimensions
       const tooltipDimensions = tooltip.node().getBoundingClientRect();
       const tooltipWidth = tooltipDimensions.width;
