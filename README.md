@@ -1,5 +1,7 @@
 # Interactive Data Visualization
 
+Explore live: https://jb2328.github.io/PUX-Diagrams/
+
 ReadMe written by ChatGPT with some minor modifications by jb2328. 
 
 ## Overview
@@ -8,6 +10,15 @@ This repository contains the code and files for an interactive data visualizatio
 
 ![Screenshot of the visualisation](/files/pux_screenshot.png)
 
+
+### PUX  
+
+PUX, or Patterns of User Experience, is a framework aimed at enhancing the interaction between users and diagrams within user interfaces. It is designed to identify and apply user experience patterns that make diagrams more comprehensible, interactive, and adaptable to various user needs and expertise levels.
+
+![PUX Heatmap](/files/heatmap.png)
+
+The framework describes 36 experiences and 10 activities. The heatmap above shows how these experiences are interlinked, with heatmap values representing their correlation strength. The d3.js visualisation creates a more interactive and designer-friendly version of this.
+
 ## Usage
 
 1. Clone this repository to your local machine.
@@ -15,12 +26,14 @@ This repository contains the code and files for an interactive data visualizatio
 3. Explore the interactive visualization to gain insights into the research paper's content.
 
 ## Directory Structure
-- `PUX_data.js`: Full PUX paragraphs and GPT4 generated summaries.
-- `experience.js`: Data structures and metadata for the visualization.
+- `PUX_data.js`: Full PUX paragraphs and ChatGPT4 generated summaries.
+- `dataset.js`: Data structures and metadata for the visualization.
 - `helpers.js`: A bunch of helper functions to keep the main script clean.
 - `color_map.js`: D3.js colormaps to be swapped whenever needed.
 - `index.html`: Main HTML file where the visualization is displayed.
 - `viz_script.js`: Main visualization script.
+- `heatmap.ipynb`: Heatmap plot script.
+
 
 ## Features
 

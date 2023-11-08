@@ -346,7 +346,6 @@ function experience_sentiments_bullets(d){
     //     let state=parseFloat(element.strength)>0?"positive":"negative";
     //     let path_id=element.source_id+"-"+element.target_id;
     //     let entry=` (${element.source_id}) ${PUX_COMPLETE[element.source_id].name} `;
-        
 
     //     console.log(path_id, state,element.strength);
     //     console.log(PUX_COMPLETE[element.source_id])
@@ -364,10 +363,7 @@ function experience_sentiments_bullets(d){
     //     // highlight relevant experiences
     //     d3.select("#experiences_circle-" + element.target_id)
     //     .style("opacity",OPACITY_ON);
-
     // })
-
-
 
 
     d3.select("#negative_experience").text("");
@@ -400,11 +396,11 @@ function animate_dashed_path(path_id, stroke_color){
     const pathLength = path.node().getTotalLength();
 
     path
-        // .attr("stroke-dasharray", `${pathLength / 50} ${pathLength / 50}`)
-        // .attr("stroke-dashoffset", pathLength)
+        .attr("stroke-dasharray", `${pathLength} ${pathLength}`)
+        .attr("stroke-dashoffset", pathLength)
         .style("stroke", stroke_color)
-        .style("stroke-width", STROKE_WIDTH_ON)
-        .style("opacity", OPACITY_OFF)
+        .style("stroke-width", STROKE_WIDTH_ON/1.5)
+        // .style("opacity", OPACITY_OFF)
         .transition()
         .duration(2500)
         .ease(d3.easeLinear)
