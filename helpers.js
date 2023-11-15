@@ -270,11 +270,11 @@ function clear_bullets(){
     d3.select("#activity_txt").text("");
     d3.select("#experience_txt").text("");
 
-    d3.selectAll(".activities_path")
-      .style("fill", "none")
-      .style("stroke", STROKE_COLOR_OFF)
-      .style("stroke-width", STROKE_WIDTH_OFF)
-      .style("stroke-opacity", OPACITY_OFF);
+    // d3.selectAll(".activities_path")
+    //   .style("fill", "none")
+    //   .style("stroke", STROKE_COLOR_OFF)
+    //   .style("stroke-width", STROKE_WIDTH_OFF)
+    //   .style("stroke-opacity", OPACITY_OFF);
 
       d3.select("#positive_experience").text("");
       d3.select("#negative_experience").text("");
@@ -507,6 +507,8 @@ function experience_sentiments_bullets_old(d){
 }
 
 function clean_experience_paths(){
+  d3.selectAll(".experiences_path").interrupt();
+
     d3.selectAll(".experiences_path")
     // .interrupt()
     // .transition()
@@ -518,14 +520,67 @@ function clean_experience_paths(){
     d3.selectAll(".experience_circle")
       .style("stroke-opacity", OPACITY_ON)
       .style("opacity", OPACITY_ON);
+}
 
+function fade_experience_paths(duration) {
+  d3.selectAll(".experiences_path")
+    .interrupt()
+    .transition()
+    .duration(duration)
+    .style("stroke-width", STROKE_WIDTH_OFF)
+    .style("opacity", OPACITY_OFF)
+    .end() // Wait for the transition to complete
+    .then(() => {
+      // Change the "stroke" property after the transition ends
+      d3.selectAll(".experiences_path").style("stroke", STROKE_COLOR_OFF);
+    })
+    .catch(error => {
+      // Handle any errors that occur during the transition
+      console.error("Transition failed:", error);
+    });
+
+  // This part remains unchanged
+  d3.selectAll(".experience_circle")
+    .style("stroke-opacity", OPACITY_ON)
+    .style("opacity", OPACITY_ON);
 }
 
 function clean_activities_paths(){
+
+    d3.selectAll(".activities_path").interrupt();
+
     d3.selectAll(".activities_path")
     .style("stroke", STROKE_COLOR_OFF)
     .style("stroke-width", STROKE_WIDTH_OFF)
     .style("stroke-opacity", OPACITY_OFF);
+}
+
+// function fade_activities_paths(duration){
+//   d3.selectAll(".activities_path")
+//   .interrupt()
+//   .transition()
+//   .duration(duration)
+//   .style("stroke", STROKE_COLOR_OFF)
+//   .style("stroke-width", STROKE_WIDTH_OFF)
+//   .style("stroke-opacity", OPACITY_OFF);
+// }
+
+function fade_activities_paths(duration) {
+  d3.selectAll(".activities_path")
+    .interrupt()
+    .transition()
+    .duration(duration)
+    .style("stroke-width", STROKE_WIDTH_OFF)
+    .style("stroke-opacity", OPACITY_OFF)
+    .end() // Wait for the transition to complete
+    .then(() => {
+      // Change the "stroke" property after the transition ends
+      d3.selectAll(".activities_path").style("stroke", STROKE_COLOR_OFF);
+    })
+    .catch(error => {
+      // Handle any errors that occur during the transition
+      console.error("Transition failed:", error);
+    });
 }
 
 

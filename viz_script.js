@@ -7,6 +7,7 @@ const activitiesWithChildren = activities;
 // Set dimensions
 const width = 1150;
 const height = 700;
+const height_svg=700;//set for the first main viz
 const padding=20;
 
 const STROKE_COLOR_ON = "green";
@@ -82,8 +83,6 @@ const yScale = d3
 const line = d3.line().curve(d3.curveBasis);
 const controlPointFactor = 0.9; // Adjust this factor to control the sharpness
 
-
-
 // Draw lines connecting ACTIVITIES and EXPERIENCES
 activities.forEach((activity) => {
   activity.imports.forEach((child) => {
@@ -108,7 +107,6 @@ activities.forEach((activity) => {
   });
 });
 
-
 const experience_links = [];
 
 // generate links between experiences
@@ -119,7 +117,7 @@ exp_list.forEach((d) => {
 
       const targetName = Object.keys(linkObj)[0];
       const strength = linkObj[targetName];
-      const pos_y = calculatePosY(d, width, height);
+      const pos_y = calculatePosY(d, width, height_svg);
 
       experience_links.push({
         source_id: d.name,
@@ -167,8 +165,6 @@ svg
   .attr("stroke", (d) => colorMap[d.name.slice(0, 2)])
   .style("stroke-width",3);
 
-
-
   // Draw text labels for activities
 svg
   .append("g")
@@ -205,6 +201,8 @@ svg
 d3.selectAll(".activity_circle")
   .on("mouseover", function (event, d) {
 
+    clean_activities_paths(); //targets activity paths only (optional)
+
     // sets innerhtml for headers and text on the right
     set_html_text(d,'activity');
 
@@ -216,6 +214,9 @@ d3.selectAll(".activity_circle")
 
   })
   .on("mouseout", function (event, d) {
+
+    // clean_activities_paths(); //targets activity paths only (optional)
+    fade_activities_paths(5000);
 
     clear_html_text();
     clear_bullets();
@@ -282,6 +283,8 @@ svg
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
 
+    clean_activities_paths();
+
     clear_bullets();
 
     set_html_text(d, 'experience');
@@ -308,9 +311,10 @@ d3.selectAll(".experience_circle")
 
     clear_html_text();
    
-    clean_experience_paths();  //targets experience paths and circles
-
-    clean_activities_paths(); //targets activity paths only (optional)
+    // clean_experience_paths();  //targets experience paths and circles
+    fade_experience_paths(5000)
+    // clean_activities_paths(); //targets activity paths only (optional)
+    fade_activities_paths(5000);
 
     icon_dezoom(d);
 
@@ -325,3 +329,112 @@ add_strength_scale();
 add_text_aid();
 
 load_animation();
+
+
+// Assuming this is the selection for your experience and activity circles
+d3.selectAll(".experience_circle, .activity_circle")
+  .on("click", function(event, d) {
+    // Get attributes of the clicked circle
+    const cx = d3.select(this).attr("cx");
+    const cy = d3.select(this).attr("cy");
+    // const r = d3.select(this).attr("r");
+    const r ="12px"
+    console.log('click', d, this)
+    //d can be in different form type for activity and  experience
+    let identifier = typeof d === 'string' ? d : d["name"] ? d["name"] : null;
+    const fill = colorMap[identifier.substring(0, 2)];
+
+    // Draw this circle on the new SVG, passing the identifier
+    drawCircleOnNewSVG(cx, cy, r, fill, identifier);
+  });
+
+// Function to handle new SVG creation and drawing circles
+let lastCircleX = 10; // Track the x-coordinate of the last drawn circle
+const circleSpacing = 30; // Spacing between circles
+
+function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
+  // Create new SVG if it doesn't exist
+  let newSVG = d3.select("#new-svg-container svg");
+  if (newSVG.empty()) {
+    newSVG = d3.select("#new-svg-container").append("svg")
+      .attr("width", 800) // Set appropriate width
+      .attr("height", 60); // Set appropriate height
+
+       // Draw text under the circle
+  newSVG.append("text")
+  .attr("x", -5)
+  .attr("y", 10) // Position the text below the circle
+  .attr("text-anchor", "middle") // Center the text under the circle
+  .text("History")
+  .style("font-size", "14px") // Adjust font size as needed
+  .style("fill", "black")
+  .attr("transform", "rotate(-90, 15, 10)"); // Rotate 90 degrees around (15, 10)
+
+  ; // Set the text color
+  }
+
+  // Calculate new circle position
+  lastCircleX += circleSpacing;
+  
+  console.log("identifier", identifier);
+  // Determine fill color based on identifier
+  // let fillColor = (identifier.substring(0, 2) === 'IA' || identifier.substring(0, 2) === 'SA' || identifier.substring(0, 2) === 'CA') ? 'white' : strokeColor;
+  let fillColor;
+  let circle_id;
+  let circle_class;
+
+  // class="experience_circle"
+// id=experiences_circle-CE1
+// class=activity_circle
+// 
+
+  // Check if identifier starts with IA, SA, or CA
+  if (['IA', 'SA', 'CA'].includes(identifier.substring(0, 2))) {
+      fillColor = 'white';
+      // Set additional modifications if needed
+      circle_class="activity_circle";
+      circle_id="activity_circle-"+identifier;
+      // Additional logic for 'IA', 'SA', 'CA' cases
+      // ...
+  } else {
+      fillColor = strokeColor;
+      circle_class="experience_circle";
+      circle_id="experiences_circle-"+identifier;
+  }
+  // Draw the circle
+  newSVG.append("circle")
+    // .attr("class", circle_class)
+    // .attr("id", circle_id)
+    .attr("cx", lastCircleX)
+    .attr("cy", 30) // Adjust y-coordinate as needed
+    .attr("r", r)
+    .attr("stroke", strokeColor)
+    .attr("stroke-width", 4)
+    .style("fill", fillColor);
+
+  // Draw text under the circle
+  newSVG.append("text")
+    .attr("x", lastCircleX-8)
+    .attr("y", 30 + parseInt(r) + 12) // Position the text below the circle
+    // .attr("text-anchor", "middle") // Center the text under the circle
+    .text(identifier)
+    .style("font-size", "10px") // Adjust font size as needed
+    .style("fill", "black"); // Set the text color
+
+  // // Optional: Draw line to previous circle if it's not the first one
+  // if (lastCircleX > circleSpacing) {
+  //   newSVG.append("line")
+  //     .attr("x1", lastCircleX - circleSpacing)
+  //     .attr("y1", 100)
+  //     .attr("x2", lastCircleX)
+  //     .attr("y2", 100)
+  //     .attr("stroke", "black")
+  //     .attr("stroke-width", 2);
+  // }
+}
+ 
+
+// class="experience_circle"
+// id=experiences_circle-CE1
+// class=activity_circle
+// activity_circle-CA4

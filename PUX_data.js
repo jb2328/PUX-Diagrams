@@ -281,18 +281,34 @@ const PUX_COMPLETE=
 // Your list of elements
 const pux_list = ["IA", "SA", "CA", "VE", "SE", "ME", "TE", "IE", "PE", "CE"];
 
+// const pux_list_definitions = {
+// //   "IA": "Interpretation Activities",
+// //   "SA": "Social Activities",
+// //   "CA": "Construction Activities",
+//   "IA": "Interpretation",
+//   "SA": "Social",
+//   "CA": "Construction",
+//   "VE": "Visibility",
+//   "SE": "Structure",
+//   "ME": "Meaning",
+//   "TE": "Thinking",
+//   "IE": "Interaction",
+//   "PE": "Process",
+//   "CE": "Creativity",
+// };
+
 const pux_list_definitions = {
-//   "IA": "Interpretation Activities",
-//   "SA": "Social Activities",
-//   "CA": "Construction Activities",
-  "IA": "Interpretation",
-  "SA": "Social",
-  "CA": "Construction",
-  "VE": "Visibility",
-  "SE": "Structure",
-  "ME": "Meaning",
-  "TE": "Thinking",
-  "IE": "Interaction",
-  "PE": "Process",
-  "CE": "Creativity",
-};
+    //   "IA": "Interpretation Activities",
+    //   "SA": "Social Activities",
+    //   "CA": "Construction Activities",
+      "IA": "Interpretation Activity",
+      "SA": "Social Activity",
+      "CA": "Construction Activity",
+      "VE": "Visibility Experience",
+      "SE": "Structure Experience",
+      "ME": "Meaning Experience",
+      "TE": "Thinking Experience",
+      "IE": "Interaction Experience",
+      "PE": "Process Experience",
+      "CE": "Creativity Experience",
+    };
