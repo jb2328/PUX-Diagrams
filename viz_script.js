@@ -210,6 +210,7 @@ d3.selectAll(".activity_circle")
     activity_bullets(d);
 
     // show lists of EXPERIENCES in bottom left
+    //animates activity-experience paths
     experience_bullets(d);
 
   })
@@ -220,6 +221,9 @@ d3.selectAll(".activity_circle")
 
     clear_html_text();
     clear_bullets();
+
+     //remove vertical text over circles
+     d3.selectAll(".experience_names").remove();
 
   });
 // =========== ACTIVITY CIRCLES END =========== //
@@ -297,6 +301,7 @@ d3.selectAll(".experience_circle")
     d3.selectAll(".experience_circle").style("opacity", OPACITY_OFF);
     d3.select(this).style("opacity", OPACITY_ON);
 
+    //draws animated paths, adds vertical text, and shows bullet points
     experience_sentiments_bullets(d); // bullets for positive and negative experience correlations
   
     icon_zoom(d);
@@ -319,6 +324,9 @@ d3.selectAll(".experience_circle")
     icon_dezoom(d);
 
     d3.select("#tooltip").remove();
+
+    //remove vertical text over circles
+    d3.selectAll(".experience_names").remove();
 
   });
 

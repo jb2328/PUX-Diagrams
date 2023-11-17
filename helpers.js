@@ -185,6 +185,8 @@ function getPathString(d) {
         .style("stroke-width", STROKE_WIDTH_ON)
         .style("fill", "none")
         .style("stroke-opacity", OPACITY_ON);
+
+      show_experience_names(target);
     });
 
     const split_text = exp_bullet_list.split("\n");
@@ -334,6 +336,9 @@ function experience_sentiments_bullets(d){
             split_negative.push(entry)
             animate_path(path_id, BACKWARD_LINK_COLOR);
         }
+
+        //vertical text over experience circles
+        show_experience_names(element.target_id);
 
         // highlight relevant experiences
         d3.select("#experiences_circle-" + element.target_id)
@@ -740,6 +745,32 @@ function add_text_aid(){
     );
     
       
+}
+
+//draw vertical text
+function show_experience_names(d){
+  let experience_name=PUX_COMPLETE[d]["name"];
+  let circle_location=d3.select("#experiences_circle-"+d);
+
+  // Get the x and y coordinates of the circle
+  let x = +circle_location.attr("cx");
+  let y = +circle_location.attr("cy");
+
+  let x_off=3;
+  let y_off=-20;
+
+  let x_pos=x+x_off;
+  let y_pos=y+y_off;
+
+  // Append text element at the circle's position
+  d3.select("svg").append("text")
+    .attr("class", "experience_names")
+    .attr("x", x_pos)
+    .attr("y", y_pos)
+    .style("font-size", "12px")  // Set the desired font size here
+    .attr("transform", "rotate(-90, " + x_pos + ", " + y_pos + ")")
+    .text(experience_name);
+
 }
 
 function load_animation(){
