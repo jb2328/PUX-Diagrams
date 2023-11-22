@@ -12,7 +12,7 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v3
       with:
-        token: ${{ secrets.GITHUB_TOKEN }} # Explicitly specifying the GitHub token
+        token: ${{ secrets.PAGES_DEPLOY_TOKEN }} # Explicitly specifying the GitHub token
 
     - name: Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
