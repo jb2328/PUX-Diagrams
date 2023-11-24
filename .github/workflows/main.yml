@@ -1,0 +1,22 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.DEPLOY2 }} # Explicitly specifying the GitHub token
+
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages
+        folder: .
+        # The token line is not necessary here as it defaults to GITHUB_TOKEN
