@@ -8,14 +8,14 @@ ReadMe written by ChatGPT with some minor modifications by jb2328.
 
 This repository contains the code and files for an interactive data visualization project. The visualization is designed to accompany the paper "A Pattern Language for the Design of Diagrams" by Alan Blackwell.
 
-![Screenshot of the visualisation](/files/pux_screenshot.png)
+![Screenshot of the visualisation](/docs/pux_screenshot.png)
 
 
 ### PUX  
 
 PUX, or Patterns of User Experience, is a framework aimed at enhancing the interaction between users and diagrams within user interfaces. It is designed to identify and apply user experience patterns that make diagrams more comprehensible, interactive, and adaptable to various user needs and expertise levels.
 
-![PUX Heatmap](/files/heatmap.png)
+![PUX Heatmap](/docs/heatmap.png)
 
 The framework describes 36 experiences and 10 activities. The heatmap above shows how these experiences are interlinked, with heatmap values representing their correlation strength. The d3.js visualisation creates a more interactive and designer-friendly version of this.
 
