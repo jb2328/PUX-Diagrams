@@ -255,7 +255,7 @@ svg
   .attr("id", (d) => `experiences_icon-${d}`)
   .attr("class", "experience_icon")
   // .attr("xlink:href", (d) => "./icons/" + d.slice(0, 2) + "/" + d + ".png") //OR SVG
-  .attr("xlink:href", (d) => "./icons/vector/" + d + ".svg") //OR SVG
+  .attr("xlink:href", (d) => "./files/icons/vector/" + d + ".svg") //OR SVG
   .attr("x", (d) => parseInt(xScale(d)) - ICON_WIDTH / 2)
   .attr("y", 248 - ICON_HEIGHT / 2)
   .attr("width", ICON_WIDTH)
