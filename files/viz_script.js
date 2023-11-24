@@ -361,6 +361,8 @@ let lastCircleX = 10; // Track the x-coordinate of the last drawn circle
 const circleSpacing = 30; // Spacing between circles
 
 function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
+
+  let clear_offset=50;
   // Create new SVG if it doesn't exist
   let newSVG = d3.select("#new-svg-container svg");
   if (newSVG.empty()) {
@@ -371,13 +373,49 @@ function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
        // Draw text under the circle
   newSVG.append("text")
   .attr("x", -5)
-  .attr("y", 10) // Position the text below the circle
+  .attr("y", 10+clear_offset) // Position the text below the circle
   .attr("text-anchor", "middle") // Center the text under the circle
   .text("History")
   .style("font-size", "14px") // Adjust font size as needed
   .style("fill", "black")
   .attr("transform", "rotate(-90, 15, 10)"); // Rotate 90 degrees around (15, 10)
 
+
+  // Draw the rectangle
+var rect = newSVG.append("rect")
+.attr("x", 5)
+.attr("y", 12) // Adjust y-coordinate as needed
+.attr("width", 42)   // width of the rectangle
+.attr("height", 40)  // height of the rectangle
+.attr("stroke", "red")
+.attr("fill", "lightblue"); // fill color of the rectangle
+
+// Add hover (mouseover) and mouseout event listeners
+rect.on("mouseover", function() {
+d3.select(this)
+  .attr("stroke-width", 3) // Increase stroke width
+  .attr("fill", "green");  // Change fill color on hover
+})
+.on("mouseout", function() {
+d3.select(this)
+  .attr("stroke-width", 1) // Reset stroke width
+  .attr("fill", "lightblue"); // Reset fill color
+});
+
+// Add click event listener
+rect.on("click", function() {
+location.reload(); // Reloads the current page
+});
+ // Draw text under the circle
+ newSVG.append("text")
+ .style("pointer-events", "none")
+ .attr("x", 25)
+ .attr("y", 36) 
+ .attr("text-anchor", "middle") // Center the text under the circle
+ .text("CLEAR")
+ .style("font-size", "12px") // Adjust font size as needed
+ .style("fill", "black")
+//  .attr("transform", "rotate(-90, 15, 10)"); // Rotate 90 degrees around (15, 10)
   ; // Set the text color
   }
 
@@ -413,7 +451,7 @@ function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
   newSVG.append("circle")
     // .attr("class", circle_class)
     // .attr("id", circle_id)
-    .attr("cx", lastCircleX)
+    .attr("cx", lastCircleX+clear_offset)
     .attr("cy", 30) // Adjust y-coordinate as needed
     .attr("r", r)
     .attr("stroke", strokeColor)
@@ -422,7 +460,7 @@ function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
 
   // Draw text under the circle
   newSVG.append("text")
-    .attr("x", lastCircleX-8)
+    .attr("x", lastCircleX-8+clear_offset)
     .attr("y", 30 + parseInt(r) + 12) // Position the text below the circle
     // .attr("text-anchor", "middle") // Center the text under the circle
     .text(identifier)
