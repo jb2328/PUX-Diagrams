@@ -863,4 +863,20 @@ function show_tooltip(d){
     
     }
     
+    function add_history_entry(d,that){
+
+      // Get attributes of the clicked circle
+      let cx = d3.select(that).attr("cx");
+      let cy = d3.select(that).attr("cy");
+      // const r = d3.select(this).attr("r");
+      let r ="12px";
+     //  console.log('click', d, this)
+      //d can be in different form type for activity and  experience
+      let identifier = typeof d === 'string' ? d : d["name"] ? d["name"] : null;
+      let fill = colorMap[identifier.substring(0, 2)];
+    
+      // Draw this circle on the new SVG, passing the identifier
+      drawCircleOnNewSVG(cx, cy, r, fill, identifier);
+    
+      }
     

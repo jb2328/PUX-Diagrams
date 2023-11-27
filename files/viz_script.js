@@ -219,7 +219,7 @@ d3.selectAll(".activity_circle")
     if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     // clean_activities_paths(); //targets activity paths only (optional)
-    fade_activities_paths(5000);
+    fade_activities_paths(3000);
 
     clear_html_text();
     clear_bullets();
@@ -331,9 +331,9 @@ d3.selectAll(".experience_circle")
     clear_html_text();
    
     // clean_experience_paths();  //targets experience paths and circles
-    fade_experience_paths(5000)
+    fade_experience_paths(3000)
     // clean_activities_paths(); //targets activity paths only (optional)
-    fade_activities_paths(5000);
+    fade_activities_paths(3000);
 
     icon_dezoom(d);
 
@@ -361,28 +361,15 @@ d3.selectAll(".experience_circle, .activity_circle")
       isClicked = true; // Set flag to true on click
       console.log("toggle clicked", isClicked);
   
-       // Get attributes of the clicked circle
-       const cx = d3.select(this).attr("cx");
-       const cy = d3.select(this).attr("cy");
-       // const r = d3.select(this).attr("r");
-       const r ="12px"
-      //  console.log('click', d, this)
-       //d can be in different form type for activity and  experience
-       let identifier = typeof d === 'string' ? d : d["name"] ? d["name"] : null;
-       const fill = colorMap[identifier.substring(0, 2)];
-   
-       // Draw this circle on the new SVG, passing the identifier
-       drawCircleOnNewSVG(cx, cy, r, fill, identifier);
-    // add_history_entry(d);
-  });
+     
+  // Call the function without passing 'this'
+    // Instead, use 'event.target' to refer to the clicked element
+    add_history_entry(d, event.target);
+    });
 
 
 
-  function add_history_entry(d){
-
-
-
-  }
+ 
 // Function to handle new SVG creation and drawing circles
 let lastCircleX = 10; // Track the x-coordinate of the last drawn circle
 const circleSpacing = 30; // Spacing between circles
@@ -410,9 +397,9 @@ function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
 
   // Draw the rectangle
 var rect = newSVG.append("rect")
-.attr("x", 5)
+.attr("x", 4)
 .attr("y", 12) // Adjust y-coordinate as needed
-.attr("width", 42)   // width of the rectangle
+.attr("width", 45)   // width of the rectangle
 .attr("height", 40)  // height of the rectangle
 .attr("stroke", "red")
 .attr("fill", "lightblue"); // fill color of the rectangle
@@ -465,16 +452,18 @@ clear_bullets();
  d3.selectAll(".experience_names").remove();
 
  isClicked=false;
+ d3.select("#lock_toggle").text("UNLOCK")
 
 });
  // Draw text under the circle
  newSVG.append("text")
  .style("pointer-events", "none")
- .attr("x", 25)
+ .attr("id", "lock_toggle")
+ .attr("x", 26)
  .attr("y", 36) 
  .attr("text-anchor", "middle") // Center the text under the circle
- .text("CLEAR")
- .style("font-size", "12px") // Adjust font size as needed
+ .text("UNLOCK")
+ .style("font-size", "10.5px") // Adjust font size as needed
  .style("fill", "black")
 //  .attr("transform", "rotate(-90, 15, 10)"); // Rotate 90 degrees around (15, 10)
   ; // Set the text color
@@ -519,6 +508,18 @@ clear_bullets();
     .attr("stroke-width", 4)
     .style("fill", fillColor);
 
+    if (!['IA', 'SA', 'CA'].includes(identifier.substring(0, 2))) {
+      newSVG.append("image")
+      .attr("pointer-events", "none")
+      .attr("id", `experiences_icon-${circle_id}`)
+      .attr("class", "experience_icon")
+      .attr("xlink:href", `./files/icons/vector/${identifier}.svg`)
+      .attr("x", lastCircleX + clear_offset - ICON_WIDTH / 2)
+      .attr("y", 30 - ICON_HEIGHT / 2)
+      .attr("width", ICON_WIDTH)
+      .attr("height", ICON_HEIGHT);
+    }
+
   // Draw text under the circle
   newSVG.append("text")
     .attr("x", lastCircleX-8+clear_offset)
@@ -528,16 +529,6 @@ clear_bullets();
     .style("font-size", "10px") // Adjust font size as needed
     .style("fill", "black"); // Set the text color
 
-  // // Optional: Draw line to previous circle if it's not the first one
-  // if (lastCircleX > circleSpacing) {
-  //   newSVG.append("line")
-  //     .attr("x1", lastCircleX - circleSpacing)
-  //     .attr("y1", 100)
-  //     .attr("x2", lastCircleX)
-  //     .attr("y2", 100)
-  //     .attr("stroke", "black")
-  //     .attr("stroke-width", 2);
-  // }
 }
  
 
