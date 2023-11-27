@@ -200,6 +200,7 @@ svg
 
 d3.selectAll(".activity_circle")
   .on("mouseover", function (event, d) {
+    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     clean_activities_paths(); //targets activity paths only (optional)
 
@@ -215,6 +216,7 @@ d3.selectAll(".activity_circle")
 
   })
   .on("mouseout", function (event, d) {
+    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     // clean_activities_paths(); //targets activity paths only (optional)
     fade_activities_paths(5000);
@@ -297,6 +299,7 @@ function resetClick() {
 
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
+    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     clean_activities_paths();
 
@@ -353,9 +356,10 @@ load_animation();
 // Assuming this is the selection for your experience and activity circles
 d3.selectAll(".experience_circle, .activity_circle")
   .on("click", function(event, d) {
-    
-      // isClicked = true; // Set flag to true on click
-      // console.log("toggle clicked", isClicked);
+    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
+
+      isClicked = true; // Set flag to true on click
+      console.log("toggle clicked", isClicked);
   
        // Get attributes of the clicked circle
        const cx = d3.select(this).attr("cx");
@@ -371,6 +375,8 @@ d3.selectAll(".experience_circle, .activity_circle")
        drawCircleOnNewSVG(cx, cy, r, fill, identifier);
     // add_history_entry(d);
   });
+
+
 
   function add_history_entry(d){
 
@@ -425,7 +431,41 @@ d3.select(this)
 
 // Add click event listener
 rect.on("click", function() {
-location.reload(); // Reloads the current page
+// location.reload(); // Reloads the current page
+
+//experiences
+clear_bullets();
+
+clear_html_text();
+
+// clean_experience_paths();  //targets experience paths and circles
+fade_experience_paths(2000)
+// clean_activities_paths(); //targets activity paths only (optional)
+fade_activities_paths(2000);
+
+d3.selectAll(".experience_circle").each(function(d, i) {
+  // 'this' refers to the current DOM element
+  // 'd' is the bound data, 'i' is the index
+  icon_dezoom(d);
+});
+
+d3.select("#tooltip").remove();
+
+//remove vertical text over circles
+d3.selectAll(".experience_names").remove();
+
+//activities
+// clean_activities_paths(); //targets activity paths only (optional)
+fade_activities_paths(2000);
+
+clear_html_text();
+clear_bullets();
+
+ //remove vertical text over circles
+ d3.selectAll(".experience_names").remove();
+
+ isClicked=false;
+
 });
  // Draw text under the circle
  newSVG.append("text")
