@@ -284,6 +284,17 @@ svg
     topLayer = d3.select("svg").append("g").attr("id", "topLayer");
   }  //required so that icons do not overlap on z index
 
+  var isClicked = false; // Flag to track click state
+
+ 
+
+
+// Optional: Code to reset the flag and re-enable mouseout, if needed
+function resetClick() {
+  isClicked = false;
+  // ... any additional reset code ...
+}
+
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
 
@@ -309,8 +320,8 @@ d3.selectAll(".experience_circle")
     show_tooltip(d);
 
   })
-
   .on("mouseout", function (event, d) {
+    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     clear_bullets();
 
@@ -342,20 +353,30 @@ load_animation();
 // Assuming this is the selection for your experience and activity circles
 d3.selectAll(".experience_circle, .activity_circle")
   .on("click", function(event, d) {
-    // Get attributes of the clicked circle
-    const cx = d3.select(this).attr("cx");
-    const cy = d3.select(this).attr("cy");
-    // const r = d3.select(this).attr("r");
-    const r ="12px"
-    console.log('click', d, this)
-    //d can be in different form type for activity and  experience
-    let identifier = typeof d === 'string' ? d : d["name"] ? d["name"] : null;
-    const fill = colorMap[identifier.substring(0, 2)];
-
-    // Draw this circle on the new SVG, passing the identifier
-    drawCircleOnNewSVG(cx, cy, r, fill, identifier);
+    
+      // isClicked = true; // Set flag to true on click
+      // console.log("toggle clicked", isClicked);
+  
+       // Get attributes of the clicked circle
+       const cx = d3.select(this).attr("cx");
+       const cy = d3.select(this).attr("cy");
+       // const r = d3.select(this).attr("r");
+       const r ="12px"
+      //  console.log('click', d, this)
+       //d can be in different form type for activity and  experience
+       let identifier = typeof d === 'string' ? d : d["name"] ? d["name"] : null;
+       const fill = colorMap[identifier.substring(0, 2)];
+   
+       // Draw this circle on the new SVG, passing the identifier
+       drawCircleOnNewSVG(cx, cy, r, fill, identifier);
+    // add_history_entry(d);
   });
 
+  function add_history_entry(d){
+
+
+
+  }
 // Function to handle new SVG creation and drawing circles
 let lastCircleX = 10; // Track the x-coordinate of the last drawn circle
 const circleSpacing = 30; // Spacing between circles

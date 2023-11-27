@@ -12,7 +12,7 @@ const exp_list=[
         'link_negative': [{'SE1': -0.9}]
       },
       {
-        'id': 'There are routes from a thing you know to something you don\'t',
+        'id': 'There are routes linking known to undiscovered',
         'name': 'SE3',
         'link_positive': [{'SE1': 0.8}, {'ME3': 0.7}, {'TE1': 0.6}, {'IE3': 0.7}, {'ME5': 0.6}],
         'link_negative': []
