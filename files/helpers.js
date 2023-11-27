@@ -313,9 +313,8 @@ function experience_sentiments_bullets(d){
     //second degree is where the experience is referenced in other paragraphs
     const second_degree = experience_links.filter(obj => obj.target_id === d); 
 
-    console.log(first_degree);
-    console.log(second_degree);
-
+    console.log("1st degree", first_degree);
+    console.log("2nd degree", second_degree);
 
     first_degree.forEach((element) => {
 
@@ -323,10 +322,11 @@ function experience_sentiments_bullets(d){
         let path_id=element.source_id+"-"+element.target_id;
         let entry=` (${element.target_id}) ${PUX_COMPLETE[element.target_id].name} `;
         
-
+        // console.log("element", element);
         // console.log(path_id, state,element.strength);
         // console.log(PUX_COMPLETE[element.source_id])
         // console.log(entry);
+        // console.log("target id ",element.target_id);
 
         if(state=="positive"){
             split_positive.push(entry)
@@ -338,7 +338,12 @@ function experience_sentiments_bullets(d){
         }
 
         //vertical text over experience circles
-        show_experience_names(element.target_id);
+        try {
+          show_experience_names(element.target_id);
+
+        } catch (error) {
+          console.log(error);
+        }
 
         // highlight relevant experiences
         d3.select("#experiences_circle-" + element.target_id)
@@ -858,4 +863,20 @@ function show_tooltip(d){
     
     }
     
+    function add_history_entry(d,that){
+
+      // Get attributes of the clicked circle
+      let cx = d3.select(that).attr("cx");
+      let cy = d3.select(that).attr("cy");
+      // const r = d3.select(this).attr("r");
+      let r ="12px";
+     //  console.log('click', d, this)
+      //d can be in different form type for activity and  experience
+      let identifier = typeof d === 'string' ? d : d["name"] ? d["name"] : null;
+      let fill = colorMap[identifier.substring(0, 2)];
+    
+      // Draw this circle on the new SVG, passing the identifier
+      drawCircleOnNewSVG(cx, cy, r, fill, identifier);
+    
+      }
     
