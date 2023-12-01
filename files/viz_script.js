@@ -289,17 +289,10 @@ svg
   var isClicked = false; // Flag to track click state
 
  
-
-
-// Optional: Code to reset the flag and re-enable mouseout, if needed
-function resetClick() {
-  isClicked = false;
-  // ... any additional reset code ...
-}
-
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
-    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
+    if (isClicked) { 
+      console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     clean_activities_paths();
 
@@ -324,7 +317,8 @@ d3.selectAll(".experience_circle")
 
   })
   .on("mouseout", function (event, d) {
-    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
+    if (isClicked) {
+      console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
 
     clear_bullets();
 
@@ -344,6 +338,15 @@ d3.selectAll(".experience_circle")
 
   });
 
+
+  // Function to handle new SVG creation and drawing circles
+let lastCircleX = 10; // Track the x-coordinate of the last drawn circle
+const circleSpacing = 30; // Spacing between circles
+let rect;
+
+
+clickable_interaction();
+
 // =========== EXPERIENCE CIRCLES END =========== //
 
 add_strength_scale();
@@ -353,186 +356,6 @@ add_text_aid();
 load_animation();
 
 
-// Assuming this is the selection for your experience and activity circles
-d3.selectAll(".experience_circle, .activity_circle")
-  .on("click", function(event, d) {
-    if (isClicked) {console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
-
-      isClicked = true; // Set flag to true on click
-      console.log("toggle clicked", isClicked);
-  
-     
-  // Call the function without passing 'this'
-    // Instead, use 'event.target' to refer to the clicked element
-    add_history_entry(d, event.target);
-    });
 
 
 
- 
-// Function to handle new SVG creation and drawing circles
-let lastCircleX = 10; // Track the x-coordinate of the last drawn circle
-const circleSpacing = 30; // Spacing between circles
-
-function drawCircleOnNewSVG(cx, cy, r, strokeColor, identifier) {
-
-  let clear_offset=50;
-  // Create new SVG if it doesn't exist
-  let newSVG = d3.select("#new-svg-container svg");
-  if (newSVG.empty()) {
-    newSVG = d3.select("#new-svg-container").append("svg")
-      .attr("width", 800) // Set appropriate width
-      .attr("height", 60); // Set appropriate height
-
-       // Draw text under the circle
-  newSVG.append("text")
-  .attr("x", -5)
-  .attr("y", 10+clear_offset) // Position the text below the circle
-  .attr("text-anchor", "middle") // Center the text under the circle
-  .text("History")
-  .style("font-size", "14px") // Adjust font size as needed
-  .style("fill", "black")
-  .attr("transform", "rotate(-90, 15, 10)"); // Rotate 90 degrees around (15, 10)
-
-
-  // Draw the rectangle
-var rect = newSVG.append("rect")
-.attr("x", 4)
-.attr("y", 12) // Adjust y-coordinate as needed
-.attr("width", 45)   // width of the rectangle
-.attr("height", 40)  // height of the rectangle
-.attr("stroke", "red")
-.attr("fill", "lightblue"); // fill color of the rectangle
-
-// Add hover (mouseover) and mouseout event listeners
-rect.on("mouseover", function() {
-d3.select(this)
-  .attr("stroke-width", 3) // Increase stroke width
-  .attr("fill", "green");  // Change fill color on hover
-})
-.on("mouseout", function() {
-d3.select(this)
-  .attr("stroke-width", 1) // Reset stroke width
-  .attr("fill", "lightblue"); // Reset fill color
-});
-
-// Add click event listener
-rect.on("click", function() {
-// location.reload(); // Reloads the current page
-
-//experiences
-clear_bullets();
-
-clear_html_text();
-
-// clean_experience_paths();  //targets experience paths and circles
-fade_experience_paths(2000)
-// clean_activities_paths(); //targets activity paths only (optional)
-fade_activities_paths(2000);
-
-d3.selectAll(".experience_circle").each(function(d, i) {
-  // 'this' refers to the current DOM element
-  // 'd' is the bound data, 'i' is the index
-  icon_dezoom(d);
-});
-
-d3.select("#tooltip").remove();
-
-//remove vertical text over circles
-d3.selectAll(".experience_names").remove();
-
-//activities
-// clean_activities_paths(); //targets activity paths only (optional)
-fade_activities_paths(2000);
-
-clear_html_text();
-clear_bullets();
-
- //remove vertical text over circles
- d3.selectAll(".experience_names").remove();
-
- isClicked=false;
- d3.select("#lock_toggle").text("UNLOCK")
-
-});
- // Draw text under the circle
- newSVG.append("text")
- .style("pointer-events", "none")
- .attr("id", "lock_toggle")
- .attr("x", 26)
- .attr("y", 36) 
- .attr("text-anchor", "middle") // Center the text under the circle
- .text("UNLOCK")
- .style("font-size", "10.5px") // Adjust font size as needed
- .style("fill", "black")
-//  .attr("transform", "rotate(-90, 15, 10)"); // Rotate 90 degrees around (15, 10)
-  ; // Set the text color
-  }
-
-  // Calculate new circle position
-  lastCircleX += circleSpacing;
-  
-  console.log("identifier", identifier);
-  // Determine fill color based on identifier
-  // let fillColor = (identifier.substring(0, 2) === 'IA' || identifier.substring(0, 2) === 'SA' || identifier.substring(0, 2) === 'CA') ? 'white' : strokeColor;
-  let fillColor;
-  let circle_id;
-  let circle_class;
-
-  // class="experience_circle"
-// id=experiences_circle-CE1
-// class=activity_circle
-// 
-
-  // Check if identifier starts with IA, SA, or CA
-  if (['IA', 'SA', 'CA'].includes(identifier.substring(0, 2))) {
-      fillColor = 'white';
-      // Set additional modifications if needed
-      circle_class="activity_circle";
-      circle_id="activity_circle-"+identifier;
-      // Additional logic for 'IA', 'SA', 'CA' cases
-      // ...
-  } else {
-      fillColor = strokeColor;
-      circle_class="experience_circle";
-      circle_id="experiences_circle-"+identifier;
-  }
-  // Draw the circle
-  newSVG.append("circle")
-    // .attr("class", circle_class)
-    // .attr("id", circle_id)
-    .attr("cx", lastCircleX+clear_offset)
-    .attr("cy", 30) // Adjust y-coordinate as needed
-    .attr("r", r)
-    .attr("stroke", strokeColor)
-    .attr("stroke-width", 4)
-    .style("fill", fillColor);
-
-    if (!['IA', 'SA', 'CA'].includes(identifier.substring(0, 2))) {
-      newSVG.append("image")
-      .attr("pointer-events", "none")
-      .attr("id", `experiences_icon-${circle_id}`)
-      .attr("class", "experience_icon")
-      .attr("xlink:href", `./files/icons/vector/${identifier}.svg`)
-      .attr("x", lastCircleX + clear_offset - ICON_WIDTH / 2)
-      .attr("y", 30 - ICON_HEIGHT / 2)
-      .attr("width", ICON_WIDTH)
-      .attr("height", ICON_HEIGHT);
-    }
-
-  // Draw text under the circle
-  newSVG.append("text")
-    .attr("x", lastCircleX-8+clear_offset)
-    .attr("y", 30 + parseInt(r) + 12) // Position the text below the circle
-    // .attr("text-anchor", "middle") // Center the text under the circle
-    .text(identifier)
-    .style("font-size", "10px") // Adjust font size as needed
-    .style("fill", "black"); // Set the text color
-
-}
- 
-
-// class="experience_circle"
-// id=experiences_circle-CE1
-// class=activity_circle
-// activity_circle-CA4
