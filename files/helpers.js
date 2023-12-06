@@ -23,20 +23,20 @@ function calculatePosY(d, width, height) {
     let pos_y;
     switch(VIZ_MODE) {
       case 0:
-        pos_y = Y_ACTIVITIES - 2;
+        pos_y = Y_ACTIVITIES+50;
         break;
-      case 1:
-        pos_y = -0.001 * Math.pow(xScale(d) - width / 2, 2) + height / 2.4;
-        break;
-      case 2:
-        pos_y = height - Math.sqrt(350 * 350 + Math.pow(xScale(d) - width / 2, 2));
-        break;
-      case 3:
-        pos_y = 700 - (7 * Math.cosh(0.01 * (xScale(d) - width / 2)) + 400);
-        break;
-      default:
-        pos_y = Y_ACTIVITIES - 2;
-        break;
+      // case 1:
+      //   pos_y = -0.001 * Math.pow(xScale(d) - width / 2, 2) + height / 2.4;
+      //   break;
+      // case 2:
+      //   pos_y = height - Math.sqrt(350 * 350 + Math.pow(xScale(d) - width / 2, 2));
+      //   break;
+      // case 3:
+      //   pos_y = 700 - (7 * Math.cosh(0.01 * (xScale(d) - width / 2)) + 400);
+      //   break;
+      // default:
+      //   pos_y = Y_ACTIVITIES - 2;
+      //   break;
     }
     return pos_y;
   }
@@ -53,22 +53,27 @@ function getPathString(d) {
       case 0:
      curveHeight =
       yChild -
-      1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) +
-      Math.random() * 25;    
+      180 * Math.pow(Math.abs(d.strength) + 0.6, 2) +
+      Math.random() * 20;    
+
+    // curveHeight =
+    // yChild -
+    // 550 *Math.abs(d.strength) +
+    // Math.random() * 25;   
         break;
-      case 1:
-        curveHeight = -0.001 * Math.pow(d.source - width/2, 2) + height/2.4;
-        break;
-      case 2:
-        curveHeight = height - Math.sqrt(350 * 350 + Math.pow(d.source - width/2, 2));
-        break;
-      case 3:
-        curveHeight = 700 - (7 * Math.cosh(0.01 * (d.source - width/2)) + 400);
-        break;
-      default:
-        curveHeight = yChild - 1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) + Math.random() * 25;   
+      // case 1:
+      //   curveHeight = -0.001 * Math.pow(d.source - width/2, 2) + height/2.4;
+      //   break;
+      // case 2:
+      //   curveHeight = height - Math.sqrt(350 * 350 + Math.pow(d.source - width/2, 2));
+      //   break;
+      // case 3:
+      //   curveHeight = 700 - (7 * Math.cosh(0.01 * (d.source - width/2)) + 400);
+      //   break;
+      // default:
+      //   curveHeight = yChild - 1000 * Math.pow(Math.abs(d.strength) - 0.45, 1) + Math.random() * 25;   
         
-        break;
+        // break;
     }
   
     path.moveTo(d.source, d.yNewCoord);
@@ -670,8 +675,9 @@ function add_strength_scale(){
     
       // if (i==0){continue}
       const yTickPos = yAxisY2Pos - i * 40; // 20 pixels between each tick
-      const tickValue = (i * 0.2).toFixed(1);
-      
+      // const tickValue = (i * 0.2).toFixed(1);
+      const tickValue = (i * 0.2*100).toFixed(0)+"%";
+
       yAxisGroup.append("line")
         .attr("x1", -2)
         .attr("y1", yTickPos)

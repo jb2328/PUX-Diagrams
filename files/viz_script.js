@@ -117,7 +117,8 @@ exp_list.forEach((d) => {
 
       const targetName = Object.keys(linkObj)[0];
       const strength = linkObj[targetName];
-      const pos_y = calculatePosY(d, width, height_svg);
+      // const pos_y = calculatePosY(d, width, height_svg);
+      const pos_y = Y_ACTIVITIES;
 
       experience_links.push({
         source_id: d.name,
@@ -125,6 +126,7 @@ exp_list.forEach((d) => {
         source: Math.round(xScale(d.name),1),
         target: Math.round(xScale(targetName),1),
         color: "darkgray",
+        // color: "red",
         strength: strength,
         viz_mode: VIZ_MODE,
         yNewCoord: pos_y
