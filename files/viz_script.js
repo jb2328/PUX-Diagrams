@@ -116,6 +116,8 @@ exp_list.forEach((d) => {
     d[linkType].forEach((linkObj) => {
 
       const targetName = Object.keys(linkObj)[0];
+      // Skip links to activity names (not in experience scale domain)
+      if (!uniqueChildren.includes(targetName)) return;
       const strength = linkObj[targetName];
       // const pos_y = calculatePosY(d, width, height_svg);
       const pos_y = Y_ACTIVITIES;
@@ -289,21 +291,26 @@ svg
   }  //required so that icons do not overlap on z index
 
   var isClicked = false; // Flag to track click state
+  var _hoverGuard = false; // Prevents infinite mouseover/mouseout from DOM moves
 
- 
+
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
-    if (isClicked) { 
-      console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
+    if (isClicked || _hoverGuard) return;
+    _hoverGuard = true;
 
     clean_activities_paths();
 
     clear_bullets();
 
+    // Clean up any existing vertical text and tooltips before re-adding
+    d3.selectAll(".experience_names").remove();
+    d3.select("#tooltip").remove();
+
     set_html_text(d, 'experience');
-   
+
     combined_bullets(d, find_experience_parents(d));  //bottom left bullets
-   
+
     clean_experience_paths(); //set all experience paths gray
 
     //highlight relevant icons
@@ -312,20 +319,23 @@ d3.selectAll(".experience_circle")
 
     //draws animated paths, adds vertical text, and shows bullet points
     experience_sentiments_bullets(d); // bullets for positive and negative experience correlations
-  
+
     icon_zoom(d);
 
     show_tooltip(d);
 
+    // Release guard after current call stack + any synthetic events settle
+    requestAnimationFrame(function() { _hoverGuard = false; });
+
   })
   .on("mouseout", function (event, d) {
-    if (isClicked) {
-      console.log("clicked no mouseout");return;} // If clicked, disable mouseout behavior
+    if (isClicked || _hoverGuard) return;
+    _hoverGuard = true;
 
     clear_bullets();
 
     clear_html_text();
-   
+
     // clean_experience_paths();  //targets experience paths and circles
     fade_experience_paths(3000)
     // clean_activities_paths(); //targets activity paths only (optional)
@@ -337,6 +347,9 @@ d3.selectAll(".experience_circle")
 
     //remove vertical text over circles
     d3.selectAll(".experience_names").remove();
+
+    // Release guard after current call stack + any synthetic events settle
+    requestAnimationFrame(function() { _hoverGuard = false; });
 
   });
 

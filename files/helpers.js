@@ -525,12 +525,11 @@ function clean_experience_paths(){
   d3.selectAll(".experiences_path").interrupt();
 
     d3.selectAll(".experiences_path")
-    // .interrupt()
-    // .transition()
-    // .duration(250)
     .style("stroke", STROKE_COLOR_OFF)
     .style("opacity", OPACITY_OFF)
-    .style("stroke-width", STROKE_WIDTH_OFF);
+    .style("stroke-width", STROKE_WIDTH_OFF)
+    .attr("stroke-dasharray", null)
+    .attr("stroke-dashoffset", null);
 
     d3.selectAll(".experience_circle")
       .style("stroke-opacity", OPACITY_ON)
@@ -547,12 +546,12 @@ function fade_experience_paths(duration) {
     .end() // Wait for the transition to complete
     .then(() => {
       // Change the "stroke" property after the transition ends
-      d3.selectAll(".experiences_path").style("stroke", STROKE_COLOR_OFF);
+      d3.selectAll(".experiences_path")
+        .style("stroke", STROKE_COLOR_OFF)
+        .attr("stroke-dasharray", null)
+        .attr("stroke-dashoffset", null);
     })
-    .catch(error => {
-      // Handle any errors that occur during the transition
-      console.error("Transition failed:", error);
-    });
+    .catch(() => {}); // Silently ignore — transitions are interrupted when user hovers a new circle
 
   // This part remains unchanged
   d3.selectAll(".experience_circle")
@@ -592,10 +591,7 @@ function fade_activities_paths(duration) {
       // Change the "stroke" property after the transition ends
       d3.selectAll(".activities_path").style("stroke", STROKE_COLOR_OFF);
     })
-    .catch(error => {
-      // Handle any errors that occur during the transition
-      console.error("Transition failed:", error);
-    });
+    .catch(() => {}); // Silently ignore — transitions are interrupted when user hovers a new circle
 }
 
 
@@ -618,13 +614,9 @@ function icon_zoom(d){
       .attr("x", d3.select(circle_id).attr("cx") - ICON_WIDTH)
       .attr("y", d3.select(circle_id).attr("cy") - ICON_HEIGHT);
 
-    // Move circle to top layer
-    let circleNode = d3.select(circle_id).node();
-    topLayer.node().appendChild(circleNode);
-
-    // Move icon to top layer
-    let iconNode = d3.select(icon_id).node();
-    topLayer.node().appendChild(iconNode);
+    // Move to top layer for z-ordering (guard in event handler prevents infinite loop)
+    topLayer.node().appendChild(d3.select(circle_id).node());
+    topLayer.node().appendChild(d3.select(icon_id).node());
 }
 
 function icon_dezoom(d){
@@ -635,6 +627,7 @@ function icon_dezoom(d){
       .transition()
       .duration(TRANSITION_TIME)
       .style("stroke", "none")
+      .style("stroke-width", "0")
       .attr("r", CIRCLE_RADIUS_PX);
 
     d3.select(icon_id)
