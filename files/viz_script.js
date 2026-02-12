@@ -291,13 +291,35 @@ svg
   }  //required so that icons do not overlap on z index
 
   var isClicked = false; // Flag to track click state
-  var _hoverGuard = false; // Prevents infinite mouseover/mouseout from DOM moves
+  var _activeHover = null; // Currently hovered circle datum
+  var _pendingMouseout = null; // Deferred mouseout cleanup (cancellable)
 
 
 d3.selectAll(".experience_circle")
   .on("mouseover", function (event, d) {
-    if (isClicked || _hoverGuard) return;
-    _hoverGuard = true;
+    if (isClicked) return;
+
+    // Synthetic re-entry for same circle (from appendChild) — just cancel pending cleanup
+    if (_activeHover === d) {
+      if (_pendingMouseout !== null) {
+        clearTimeout(_pendingMouseout);
+        _pendingMouseout = null;
+      }
+      return;
+    }
+
+    // Cancel any pending mouseout cleanup from previous circle
+    if (_pendingMouseout !== null) {
+      clearTimeout(_pendingMouseout);
+      _pendingMouseout = null;
+    }
+
+    // Dezoom previous circle if transitioning directly between circles
+    if (_activeHover !== null) {
+      icon_dezoom(_activeHover);
+    }
+
+    _activeHover = d;
 
     clean_activities_paths();
 
@@ -324,32 +346,33 @@ d3.selectAll(".experience_circle")
 
     show_tooltip(d);
 
-    // Release guard after current call stack + any synthetic events settle
-    requestAnimationFrame(function() { _hoverGuard = false; });
-
   })
   .on("mouseout", function (event, d) {
-    if (isClicked || _hoverGuard) return;
-    _hoverGuard = true;
+    if (isClicked) return;
+    if (_activeHover !== d) return;
 
-    clear_bullets();
+    // Defer cleanup — allows cancellation if cursor moves to another circle
+    _pendingMouseout = setTimeout(function() {
+      _pendingMouseout = null;
+      if (_activeHover !== d) return; // Already moved to another circle
 
-    clear_html_text();
+      _activeHover = null;
 
-    // clean_experience_paths();  //targets experience paths and circles
-    fade_experience_paths(3000)
-    // clean_activities_paths(); //targets activity paths only (optional)
-    fade_activities_paths(3000);
+      clear_bullets();
 
-    icon_dezoom(d);
+      clear_html_text();
 
-    d3.select("#tooltip").remove();
+      fade_experience_paths(3000);
+      fade_activities_paths(3000);
 
-    //remove vertical text over circles
-    d3.selectAll(".experience_names").remove();
+      icon_dezoom(d);
 
-    // Release guard after current call stack + any synthetic events settle
-    requestAnimationFrame(function() { _hoverGuard = false; });
+      d3.select("#tooltip").remove();
+
+      //remove vertical text over circles
+      d3.selectAll(".experience_names").remove();
+
+    }, 0);
 
   });
 
